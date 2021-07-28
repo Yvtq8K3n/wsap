@@ -167,9 +167,10 @@ class ScannersDast:
             self.zap = scanners.zap
             self.wapiti = scanners.wapiti
 
-        def performJSONLogin(self, login_url, login_dataJSON, field_username="username", field_password="password", logged_in_regex=None, logged_out_regex=None):
+        def performJSONLogin(self, login_url, login_dataJSON, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
             print("ZAP: Creating new user")
-            user_id = self.zap.authentications.performJSONLogin(login_url, login_dataJSON, field_username, field_password, logged_in_regex, logged_out_regex)
+            print(login_dataJSON)
+            user_id = self.zap.authentications.performJSONLogin(login_url, login_dataJSON, field_username=field_username, field_password=field_password, logged_in_regex=None, logged_out_regex=None)
 
             logging.warning("Wapiti: Authentication of requests is provided by ZAP Proxy")
             return user_id
