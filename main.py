@@ -7,7 +7,7 @@ from scan_mode import ScanMode
 from urllib.parse import urlparse
 
 '''
-/usr/bin/python3 main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --scanner.key vcvicclkl5kegm34aba9dhroem --target.url https://test-lm.void.pt --include.url https://test-lm.void.pt/robots.txt --include.url https://test-lm.void.pt/favicon.ico --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt/ --scan.apiDefinition openapi.json --login.url https://test-lm.void.pt/login --login.request "{\"cartId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField username --login.passField password --login.user admin@leiriamarket.pt "hud6&ç#R[f1"
+/usr/bin/python3 main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --scanner.key vcvicclkl5kegm34aba9dhroem --target.url https://test-lm.void.pt --include.url https://test-lm.void.pt/robots.txt --include.url https://test-lm.void.pt/favicon.ico --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt/ --scan.apiDefinition openapi.json --login.url https://test-lm-api.void.pt/authentication/login --login.request "{\"cartId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField email --login.passField password --login.user admin@leiriamarket.pt "hud6&ç#R[f1"
 '''
 
 parser = argparse.ArgumentParser(prog='Web Security Application Project(WSAP)')
@@ -88,14 +88,15 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
 
     #4) Attack
     print ('Launching attack...')
-    scanners_dast.attacks.startActiveScan()
+    #scanners_dast.attacks.startActiveScan()
 
     #5) Display Alertsf
     #zap.alerts.display()S
 
     #6) Authenticate BY
     login_url = getattr(args, 'login.url')
-    login_JSON_Request = json.loads(urllib.parse.unquote(getattr(args, 'login.request')))
+    login_Request = urllib.parse.unquote(getattr(args, 'login.request'))
+    login_JSON_Request = json.loads(login_Request)
     login_usernameFieldName = getattr(args, 'login.userField') 
     login_passwordFieldName = getattr(args, 'login.passField')
     Zap_logged_in_regex = ""
@@ -108,15 +109,14 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
 
         #1) Create User
         user_id=scanners_dast.authentications.performJSONLogin(login_url, login_JSON_Request, 
-            login_usernameFieldName, login_passwordFieldName, Zap_logged_in_regex, Zap_logged_out_regex)
+            field_username=login_usernameFieldName, field_password=login_passwordFieldName)
         
         #2) Scan
         scanners_dast.crawlers.scanAsUser(scan_mode,user_id)
         
         #3) Perform Attack
-        if args.performAttack is not None:
-            print ('Launching attack...')
-            scanners_dast.attacks.startActiveScanAsUser(user_id)
+        print ('Launching attack...')
+        scanners_dast.attacks.startActiveScanAsUser(user_id)
 
     #Zap_loginUrl="http://localhost:8090/bodgeit/login.jsp"
     ##Zap_loginUsername = "test1@test.com"

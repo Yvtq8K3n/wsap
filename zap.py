@@ -301,7 +301,7 @@ class ZapScanner:
             print('User Auth Configured')
             print('User created with id:'+user_id)
         
-        def performJSONLogin(self, login_url, login_dataJSON, field_username="username", field_password="password", logged_in_regex=None, logged_out_regex=None):
+        def performJSONLogin(self, login_url, login_Request, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
             #upload_script
             script_name = 'jwtScript.js'
             script_type = 'httpsender'
@@ -310,9 +310,15 @@ class ZapScanner:
             print("Loading Script: "+self.zap.script.load(script_name, script_type, script_engine, file_name))
             print("Activating Script: "+self.zap.script.enable(script_name))
 
+
+            login_data = json.dumps(login_Request)
             #set_json_based_auth
-            login_data = bytes(login_dataJSON, "utf-8").decode("unicode_escape")
+            #print(login_Request)
+            #login_data = bytes(str(login_Request), "utf-8")#.decode("unicode_escape")
+            #print(login_data)
             json_based_config = 'loginUrl=' + urllib.parse.quote(login_url) + '&loginRequestData=' + urllib.parse.quote(login_data)
+            print(json_based_config)
+            
             self.zap.authentication.set_authentication_method(self.zapscanner.context_id, 'jsonBasedAuthentication', json_based_config)
             print('Configured JSON based authentication')
             
@@ -324,9 +330,11 @@ class ZapScanner:
             print('Configured logged in indicator regex: ')
             
             #set_user_auth_config:
-            login_dataJSON = json.loads(login_dataJSON)
+            login_dataJSON = login_Request
             username = login_dataJSON[field_username]
             password = login_dataJSON[field_password]
+            print (username)
+            print (password)
             user_id = self.zap.users.new_user(self.zapscanner.context_id, username)
             user_auth_config = 'username=' + urllib.parse.quote(username) + '&password=' + urllib.parse.quote(password)
 

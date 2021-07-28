@@ -60,6 +60,12 @@ function responseReceived(msg, initiator, helper) {
 
   //Retrieve Authorization Token from header
   token = msg.getResponseHeader().getHeader("Authorization")
+  
+  print("token:"+ token)  
+  print("RequestHeader: "+ msg.getRequestHeader())
+  print("RequestBody: "+msg.getRequestBody())
+  print("ResponseHeader: "+resheaders)
+  print("ResponseBody: "+resbody)
 
   // If auth request was not succesful move on
   if (token.length==0) {return;}
@@ -67,11 +73,6 @@ function responseReceived(msg, initiator, helper) {
   // @todo abstract away to be configureable
   logger("Capturing token for Authorization\n" + token)
   ScriptVars.setGlobalVar("header_token", token)
-
-  print("RequestHeader: "+ msg.getRequestHeader())
-  print("RequestBody: "+msg.getRequestBody())
-  print("ResponseHeader: "+resheaders)
-  print("ResponseBody: "+resbody)
 }
 
 
