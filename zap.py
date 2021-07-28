@@ -10,6 +10,7 @@ from urllib.parse import urlparse
 
 #Files
 ZAP_PROCESS_LOG =  "/zap_process.log"
+ZAP_REPORT =  "/zap_report.json"
 STORE_URLS =  "/UrlEntries.txt"
 AUTH_SCRIPT =  os.path.dirname(__file__) + '/Scripts/jwtScript.js'
 
@@ -244,7 +245,7 @@ class ZapScanner:
             self.zapscanner = zapscanner
             self.zap = zapscanner.zap
 
-        def display(self):
+        def report(self):
             # Retrieve the alerts using paging in case there are lots of them
             st = 0
             pg = 5000
@@ -270,8 +271,7 @@ class ZapScanner:
             print('Total number of alerts: ' + str(alert_count))
 
             print('Writing alerts to file')
-
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_PROCESS_LOG, 'a+') as outfile:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_REPORT, 'a+') as outfile:
                 json.dump(alerts, outfile, ensure_ascii=False, indent=4)
 
     class Authentication:

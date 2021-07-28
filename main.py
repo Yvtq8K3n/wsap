@@ -90,10 +90,7 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
     print ('Launching attack...')
     #scanners_dast.attacks.startActiveScan()
 
-    #5) Display Alertsf
-    #zap.alerts.display()S
-
-    #6) Authenticate BY
+    #5) Authenticate
     login_url = getattr(args, 'login.url')
     login_Request = urllib.parse.unquote(getattr(args, 'login.request'))
     login_JSON_Request = json.loads(login_Request)
@@ -118,59 +115,8 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
         print ('Launching attack...')
         scanners_dast.attacks.startActiveScanAsUser(user_id)
 
-    #Zap_loginUrl="http://localhost:8090/bodgeit/login.jsp"
-    ##Zap_loginUsername = "test1@test.com"
-    #Zap_loginPassword = "test123"
-    #Zap_UsernameFieldName = "username"
-    #Zap_PasswordFieldName = "password"
-    #Zap_logged_in_regex = ""
-    #Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
-    #zap.authentications.performFormBasedLogin(Zap_loginUrl, Zap_loginUsername,Zap_loginPassword,logged_out_regex=Zap_logged_out_regex)
-
-    #Client
-    '''
-    Zap_loginUrl="https://test-lm-api.void.pt/authentication/login"
-    Zap_login_dataJSON ='{"cartId": "3fa85f64-5717-4562-b3fc-2c963f66afa6","email": "nb.reis@campus.fct.unl.pt","password": "12345"}'
-    Zap_UsernameFieldName = "email"
-    Zap_PasswordFieldName = "password"
-    Zap_logged_in_regex = ""
-    Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
-    user_id=scanners_dast.authentications.performJSONLogin(Zap_loginUrl, Zap_login_dataJSON, Zap_UsernameFieldName, Zap_PasswordFieldName, logged_out_regex=Zap_logged_out_regex)
-    #scanners_dast.crawlers.scanTradionalAsUser(user_id)
-    #scanners_dast.crawlers.scanAjaxAsUser(user_id)
-    scanners_dast.crawlers.fullScanAsUser(user_id)
-    scanners_dast.attacks.startActiveScanAsUser(user_id)
-
- -
-    #Logista(FAIL) - not working
-    Zap_loginUrl="https://test-lm-api.void.pt/authentication/login"
-    Zap_login_dataJSON ='{"cartId":"3fa85f64-5717-4562-b3fc-2c963f66afa6","email":"nuno.reis@voidsoftware.com","password":"12345"}'
-    Zap_UsernameFieldName = "email"
-    Zap_PasswordFieldName = "password"
-    Zap_logged_in_regex = ""
-    Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
-    user_id=scanners_dast.authentications.performJSONLogin(Zap_loginUrl, Zap_login_dataJSON, Zap_UsernameFieldName, Zap_PasswordFieldName, logged_out_regex=Zap_logged_out_regex)
-    #scanners_dast.crawlers.scanTradionalAsUser(user_id)
-    #scanners_dast.crawlers.scanAjaxAsUser(user_id)
-    scanners_dast.crawlers.fullScanAsUser(user_id)
-    scanners_dast.attacks.startActiveScanAsUser(user_id)
-
-    #Admin
-    Zap_loginUrl="https://test-lm-api.void.pt/authentication/login"
-    Zap_login_dataJSON ='{"cartId": "3fa85f64-5717-4562-b3fc-2c963f66afa6","email": "admin@leiriamarket.pt","password": "hud6&ç#R[f1"}'
-    Zap_UsernameFieldName = "email"
-    Zap_PasswordFieldName = "password"
-    Zap_logged_in_regex = ""
-    Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
-    user_id=scanners_dast.authentications.performJSONLogin(Zap_loginUrl, Zap_login_dataJSON, Zap_UsernameFieldName, Zap_PasswordFieldName, logged_out_regex=Zap_logged_out_regex)
-    #scanners_dast.crawlers.scanTradionalAsUser(user_id)
-    #scanners_dast.crawlers.scanAjaxAsUser(user_id)
-    scanners_dast.crawlers.fullScanAsUser(user_id)
-    scanners_dast.attacks.startActiveScanAsUser(user_id)
-
-    #7) Scan as Userq
-    zap.alerts.display()
-    '''
+    #6) Report
+    zap.alerts.report()
 
     # To close ZAP:
     #scanners_dast.shutdown()
