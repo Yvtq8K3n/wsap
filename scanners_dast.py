@@ -1,6 +1,7 @@
 from zap import ZapScanner
 from wapiti import WapitiScanner
 from urllib.parse import urlparse
+import psutil
 import subprocess
 import time
 import sys
@@ -17,11 +18,20 @@ class ScannersDast:
         parsedURL= urlparse(proxy_IpAddress)
 
         os.makedirs(TMP_DIRECTORY, exist_ok=True)
-        print ('Launching ZAP ...')
-        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
+
+        processes = list(p.name() for p in psutil.process_iter())
+
+        count = processes.count("zap.sh")
+
+        if count == 0:
+            print ('Launching ZAP instance...')
+            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
             "-port", proxy_PortAddress],stdout=open(ZAP_PROCESS_LOG, "w"))
-        print ('Waiting for ZAP to load, 1 min...')
-        sleep(60)
+
+            print ('Waiting for ZAP to load, 1 min...')
+            sleep(60)
+        else:
+            logging.info('A ZAP instance is already running!')
 
         #Parse IpAddress
         parsedIpAddress = parsedURL.netloc
