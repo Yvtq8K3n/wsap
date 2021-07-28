@@ -2,7 +2,7 @@ import argparse
 import json
 from logging import currentframe
 import urllib
-import datetime
+from datetime import datetime
 from scanners_sast import ScannersSast
 from scanners_dast import ScannersDast
 from scan_mode import ScanMode
@@ -48,7 +48,7 @@ args = parser.parse_args()
 
 #Target
 target_url = getattr(args, 'target.url')
-current_time = datetime.datetime.now().time()
+current_time = datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
 
 #SAST SCANNER
 scanner_target = getattr(args, 'target')

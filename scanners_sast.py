@@ -9,7 +9,7 @@ TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp/"
 
 class ScannersSast:
     def __init__(self, target_url, current_time):
-        PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time.strftime("%Y/%m/%d/")
+        PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
 
         os.makedirs(PATH, exist_ok=True)
         print ('Launching InsiderCLI...')

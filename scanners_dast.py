@@ -15,7 +15,7 @@ WAPITI_PROCESS_LOG = "/wapiti_process.log"
 class ScannersDast:
     def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, zap_APIkey, current_time):#, apikey, ip_address, port):
         parsedURL= urlparse(proxy_IpAddress)
-        PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time.strftime("%Y/%m/%d/")
+        PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
 
         os.makedirs(PATH, exist_ok=True)
 
