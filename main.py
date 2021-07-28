@@ -1,6 +1,8 @@
 import argparse
 import json
+from logging import currentframe
 import urllib
+import datetime
 from scanners_sast import ScannersSast
 from scanners_dast import ScannersDast
 from scan_mode import ScanMode
@@ -46,12 +48,13 @@ args = parser.parse_args()
 
 #Target
 target_url = getattr(args, 'target.url')
+current_time = datetime.datetime.now().time()
 
 #SAST SCANNER
 scanner_target = getattr(args, 'target')
 if (scanner_target is not None):
     print ('Starting SAST scan')
-    scanners_sast = ScannersSast(target_url)
+    scanners_sast = ScannersSast(target_url, current_time)
     scanners_sast.scanner.start(scanner_target)
 
 #DAST SCANNER
@@ -65,7 +68,7 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
     scanner_key = getattr(args, 'scanner.key')
 
     print ('Starting DAST module:')
-    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scanner_key)
+    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scanner_key, current_time)
 
     print ('Creating profile...')
     include_Urls = getattr(args, 'include.url')

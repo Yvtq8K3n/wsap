@@ -13,9 +13,9 @@ ZAP_PROCESS_LOG =  "/zap_process.log"
 WAPITI_PROCESS_LOG = "/wapiti_process.log"
 
 class ScannersDast:
-    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, zap_APIkey):#, apikey, ip_address, port):
+    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, zap_APIkey, current_time):#, apikey, ip_address, port):
         parsedURL= urlparse(proxy_IpAddress)
-        PATH = TMP_DIRECTORY + urlparse(target_url).netloc
+        PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
 
         os.makedirs(PATH, exist_ok=True)
 
@@ -185,7 +185,6 @@ class ScannersDast:
             print ("Generating report")
             self.zap.alerts.report()
 
-
 def sleep(seconds):
     timeout = time.time() + seconds
     while (time.time() <= timeout):
@@ -198,5 +197,3 @@ def sleep(seconds):
         sys.stdout.write('\rloading \\')
         time.sleep(0.1)
     sys.stdout.write('\rDone!      \n')
-
-#zap.crawlers.scanAjax()
