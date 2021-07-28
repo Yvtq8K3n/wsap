@@ -4,11 +4,10 @@ import os
 from urllib.parse import urlparse
 
 #Files
-TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp"
-REPORT_PATH = TMP_DIRECTORY + "/wapiti_report.json"
-URL_ENTRIES = TMP_DIRECTORY + "/UrlEntries.txt"
-STORE_SESSION = TMP_DIRECTORY + "/Wapiti"
-WAPITI_LOG = TMP_DIRECTORY + "/wapiti.log"
+REPORT_PATH = "/wapiti_report.json"
+URL_ENTRIES = "/UrlEntries.txt"
+STORE_SESSION = "/Wapiti"
+WAPITI_LOG = "/wapiti.log"
 
 #Properties
 INVALID_MODULE = "\"\""
@@ -18,13 +17,14 @@ DEFAULT_SCAN_DEPTH = 4
 
 class WapitiScanner:
 
-    def __init__(self, proxy_IpAddress, proxy_Port):#, apikey, ip_address, port):
+    def __init__(self, TMP_DIRECTORY, proxy_IpAddress, proxy_Port):#, apikey, ip_address, port):
+        self.TMP_DIRECTORY = TMP_DIRECTORY
         self.crawlers = self.Crawler(self)
         self.attacks = self.Attack(self)
         
         #Due to persistence issuies it is required params to added everytime
-        self.wapiti_storage_cmd = "--store-session {} ".format(STORE_SESSION)
-        self.wapiti_report_cmd = "--format json --output {} ".format(REPORT_PATH)
+        self.wapiti_storage_cmd = "--store-session {} ".format(self.TMP_DIRECTORY + STORE_SESSION)
+        self.wapiti_report_cmd = "--format json --output {} ".format(self.TMP_DIRECTORY + REPORT_PATH)
         self.wapiti_excluded_cmd = ""
 
         if (proxy_IpAddress==None):
@@ -43,13 +43,13 @@ class WapitiScanner:
 
         # According to Wapiti url's must be added with: --start <url>
         logging.info('Included %s and its subpaths', self.target_url)
-        '''for url in include_urls:
+        for url in include_urls:
             wapiti_cmd += " --start {} ".format(url)
             logging.info('Included %s and its subpaths', target_url)
 
         if len(exclude_urls) == 0:
             logging.info('Exclude urls not provided for %s using defaults', self.target_url)
-            default_excluded_paths=['.*logout.*', '.*uitloggen.*', '.*afmelden.*', '.*signout.*']
+            default_excluded_paths=['logout', 'uitloggen', 'afmelden', '.signout']
 
             # According to Wapiti url's must be excluded with: --exclude <url>
             for path in default_excluded_paths:
@@ -60,21 +60,21 @@ class WapitiScanner:
         # According to Wapiti url's must be excluded with: --exclude <url>
         for url in exclude_urls:
             self.wapiti_excluded_cmd += " --exclude {} ".format(url)
-            logging.info('Excluded %s', url)'''
+            logging.info('Excluded %s', url)
         
         wapiti_cmd += self.wapiti_proxy_cmd
         wapiti_cmd += "-d {} -m {} --flush-session ".format(INVALID_SCAN, INVALID_MODULE)
         wapiti_cmd += self.wapiti_storage_cmd
 
-        with open(WAPITI_LOG, 'w') as wapiti_log:
+        with open(self.TMP_DIRECTORY + WAPITI_LOG, 'w') as wapiti_log:
             wapiti_log.write(wapiti_cmd)
             subprocess.call(wapiti_cmd,stdout=wapiti_log, shell=True)
 
     def storeSession(self):
         wapiti_cmd = "wapiti -u {} ".format(self.target_url)
-        wapiti_cmd += "-m {} --store-session {} ".format(INVALID_MODULE, STORE_SESSION)
+        wapiti_cmd += "-m {} --store-session {} ".format(INVALID_MODULE, self.TMP_DIRECTORY + STORE_SESSION)
 
-        with open(WAPITI_LOG, "a+") as wapiti_log:
+        with open(self.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
             wapiti_log.write(wapiti_cmd)
             subprocess.call(wapiti_cmd,stdout=wapiti_log, shell=True)
       
@@ -96,7 +96,7 @@ class WapitiScanner:
             wapiti_cmd += self.wapitiscanner.wapiti_report_cmd
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
-            with open(WAPITI_LOG, "a+") as wapiti_log:
+            with open(self.wapitiscanner.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
                 wapiti_log.write(wapiti_cmd)
                 subprocess.call(wapiti_cmd,stdout=wapiti_log, shell=True)
 
@@ -107,14 +107,14 @@ class WapitiScanner:
 
             #Reading entries from file
             logging.info("Setting up the scan custom properties")
-            wapiti_cmd += "--start {} ".format(URL_ENTRIES)
+            wapiti_cmd += "--start {} ".format(self.wapitiscanner.TMP_DIRECTORY + URL_ENTRIES)
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_report_cmd
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
-            with open(WAPITI_LOG, "a+") as wapiti_log:
+            with open(self.wapitiscanner.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
                 wapiti_log.write(wapiti_cmd)
                 subprocess.call(wapiti_cmd,stdout=wapiti_log, shell=True)
 

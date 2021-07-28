@@ -1,0 +1,3 @@
+https://test-lm.void.pt
+https://test-lm.void.pt/favicon.ico
+https://test-lm.void.pt/robots.txt

@@ -9,14 +9,15 @@ from pprint import pprint
 from urllib.parse import urlparse
 
 #Files
-TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp"
-ZAP_LOG =  TMP_DIRECTORY + "/zap.log"
-STORE_URLS =  TMP_DIRECTORY + "/UrlEntries.txt"
+ZAP_LOG =  "/zap.log"
+STORE_URLS =  "/UrlEntries.txt"
 AUTH_SCRIPT =  os.path.dirname(__file__) + '/Scripts/jwtScript.js'
 
 class ZapScanner:
 
-    def __init__(self, ip_address, port, apikey):
+    def __init__(self, TMP_DIRECTORY, ip_address, port, apikey):
+        self.TMP_DIRECTORY = TMP_DIRECTORY
+
         self.ip_address = ip_address
         self.port = port
         self.api_key = apikey
@@ -38,23 +39,23 @@ class ZapScanner:
 
         # include target url
         self.target_url = target_url
-        self.zap.context.include_in_context(self.context_name, target_url + '.*')
+        self.zap.context.include_in_context(self.context_name, target_url)
 
         # include additional url's
-        #for url in include_urls:
-            #self.zap.context.include_in_context(self.context_name, target_url + '.*')
-            #logging.info('Included %s and its subpaths', target_url)
+        for url in include_urls:
+            self.zap.context.include_in_context(self.context_name, url)
+            logging.info('Included %s and its subpaths', url)
 
         # exclude all urls that end the authenticated session
-        '''if len(exclude_urls) == 0:
-            self.zap.context.exclude_from_context(self.context_name, target_url+'.*logout.*')
-            self.zap.context.exclude_from_context(self.context_name, target_url+'.*uitloggen.*')
-            self.zap.context.exclude_from_context(self.context_name, target_url+'.*afmelden.*')
-            self.zap.context.exclude_from_context(self.context_name, target_url+'.*signout.*')
+        if len(exclude_urls) == 0:
+            self.zap.context.exclude_from_context(self.context_name, target_url+'/.*logout.*')
+            self.zap.context.exclude_from_context(self.context_name, target_url+'/.*uitloggen.*')
+            self.zap.context.exclude_from_context(self.context_name, target_url+'/.*afmelden.*')
+            self.zap.context.exclude_from_context(self.context_name, target_url+'/.*signout.*')
 
         for url in exclude_urls:
             self.zap.context.exclude_from_context(self.context_name, url)
-            logging.info('Excluded %s and its subpaths', url)'''
+            logging.info('Excluded %s and its subpaths', url)
 
     def shutdown(self):
         self.zap.core.shutdown()
@@ -81,7 +82,7 @@ class ZapScanner:
             logging.info('Spider has completed!')
           
             # Prints the URLs the spider has crawled
-            with open(ZAP_LOG, 'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as zap_log:
                 zap_log.write('Spidering target {}'.format(self.zapscanner.context_name))
                 zap_log.write('\r\n'.join(map(str, self.zap.spider.results(scanID))))
             
@@ -103,7 +104,7 @@ class ZapScanner:
             logging.info('Spider has completed!')
 
             # Prints the URLs the spider has crawled
-            with open(ZAP_LOG, 'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as zap_log:
                 zap_log.write('Spidering as {0} target: {1}'.format(json_user["username"], self.zapscanner.context_name))
                 zap_log.write('\n'.join(map(str, self.zap.spider.results(scanID))))
             # If required post process the spider results
@@ -124,7 +125,7 @@ class ZapScanner:
             logging.info('Ajax Spider completed')
             ajaxResults = self.zap.ajaxSpider.results(start=0, count=10)
 
-            with open(ZAP_LOG, 'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as zap_log:
                 zap_log.write('Ajax Spider target {}'.format(self.zapscanner.context_name))
                 zap_log.write(json.dumps(ajaxResults, indent=4))
 
@@ -151,7 +152,7 @@ class ZapScanner:
             ajaxResults = self.zap.ajaxSpider.results(start=0, count=3)
             #print(json.dumps(ajaxResults, indent=4))
 
-            with open(ZAP_LOG,'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG,'a+') as zap_log:
                 zap_log.write('Writing a sample of the ajax request performed')
                 json.dump(ajaxResults, zap_log, ensure_ascii=False, indent=4)
 
@@ -174,7 +175,7 @@ class ZapScanner:
         def exportUrlScanEntries(self):
             urlEntries = self.zap.context.urls(self.zapscanner.context_name)
 
-            with open(STORE_URLS, 'a+') as f:
+            with open(self.zapscanner.TMP_DIRECTORY + STORE_URLS, 'a+') as f:
                 for url in urlEntries:
                     f.write("%s\n" % url)
         
@@ -270,7 +271,7 @@ class ZapScanner:
 
             print('Writing alerts to file')
 
-            with open(ZAP_LOG, 'a+') as outfile:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as outfile:
                 json.dump(alerts, outfile, ensure_ascii=False, indent=4)
 
     class Authentication:

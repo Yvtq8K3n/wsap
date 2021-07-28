@@ -1,0 +1,65 @@
+
+     __    __            _ _   _ _____
+    / / /\ \ \__ _ _ __ (_) |_(_)___ /
+    \ \/  \/ / _` | '_ \| | __| | |_ \
+     \  /\  / (_| | |_) | | |_| |___) |
+      \/  \/ \__,_| .__/|_|\__|_|____/
+                  |_|                 
+Wapiti-3.0.5 (wapiti.sourceforge.io)
+[*] Saving scan state, please wait...
+
+ Note
+========
+This scan has been saved in the file /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/Wapiti/test-lm.void.pt_folder_4d49b52b.db
+[*] Wapiti found 3 URLs and forms during the scan
+[*] Loading modules:
+	 backup, brute_login_form, buster, cookieflags, crlf, csp, csrf, drupal_enum, exec, file, htaccess, http_headers, methods, nikto, permanentxss, redirect, shellshock, sql, ssrf, timesql, wapp, wp_enum, xss, xxe
+
+Report
+------
+A report has been generated in the file /home/marquez/.wapiti/generated_report
+Open /home/marquez/.wapiti/generated_report/test-lm.void.pt_07282021_1328.html with a browser to see this report.
+wapiti -u https://test-lm.void.pt  --start https://test-lm.void.pt/robots.txt  --start https://test-lm.void.pt/favicon.ico -p http://127.0.0.1:8010 -d 0 -m "" --flush-session --store-session /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/Wapiti 
+     __      __               .__  __  .__________
+    /  \    /  \_____  ______ |__|/  |_|__\_____  \
+    \   \/\/   /\__  \ \____ \|  \   __\  | _(__  <
+     \        /  / __ \|  |_> >  ||  | |  |/       \
+      \__/\  /  (____  /   __/|__||__| |__/______  /
+           \/        \/|__|                      \/
+Wapiti-3.0.5 (wapiti.sourceforge.io)
+[*] Resuming scan from previous session, please wait
+[*] Saving scan state, please wait...
+
+ Note
+========
+This scan has been saved in the file /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/Wapiti/test-lm.void.pt_folder_4d49b52b.db
+[*] Wapiti found 3 URLs and forms during the scan
+[*] Loading modules:
+	 backup, brute_login_form, buster, cookieflags, crlf, csp, csrf, drupal_enum, exec, file, htaccess, http_headers, methods, nikto, permanentxss, redirect, shellshock, sql, ssrf, timesql, wapp, wp_enum, xss, xxe
+
+Report
+------
+A report has been generated in the file /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/wapiti_report.json
+wapiti -u https://test-lm.void.pt  --exclude https://test-lm.void.ptlogout  --exclude https://test-lm.void.ptuitloggen  --exclude https://test-lm.void.ptafmelden  --exclude https://test-lm.void.pt.signout -d 4 -m "" -p http://127.0.0.1:8010 --store-session /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/Wapiti --format json --output /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/wapiti_report.json 
+     __    __            _ _   _ _____
+    / / /\ \ \__ _ _ __ (_) |_(_)___ /
+    \ \/  \/ / _` | '_ \| | __| | |_ \
+     \  /\  / (_| | |_) | | |_| |___) |
+      \/  \/ \__,_| .__/|_|\__|_|____/
+                  |_|                 
+Wapiti-3.0.5 (wapiti.sourceforge.io)
+[*] Resuming scan from previous session, please wait
+GET https://test-lm.void.pt/static/js/2.9e7f0623.chunk.js (1) generated an exception: peer closed connection without sending complete message body (received 1638106 bytes, expected 1750290)
+[*] Saving scan state, please wait...
+
+ Note
+========
+This scan has been saved in the file /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/Wapiti/test-lm.void.pt_folder_4d49b52b.db
+[*] Wapiti found 6 URLs and forms during the scan
+[*] Loading modules:
+	 backup, brute_login_form, buster, cookieflags, crlf, csp, csrf, drupal_enum, exec, file, htaccess, http_headers, methods, nikto, permanentxss, redirect, shellshock, sql, ssrf, timesql, wapp, wp_enum, xss, xxe
+
+Report
+------
+A report has been generated in the file /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/wapiti_report.json
+wapiti -u https://test-lm.void.pt  --exclude https://test-lm.void.ptlogout  --exclude https://test-lm.void.ptuitloggen  --exclude https://test-lm.void.ptafmelden  --exclude https://test-lm.void.pt.signout --start /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/UrlEntries.txt -m "" -p http://127.0.0.1:8010 --store-session /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/Wapiti --format json --output /home/marquez/Desktop/wsap/tmp/test-lm.void.pt/wapiti_report.json 

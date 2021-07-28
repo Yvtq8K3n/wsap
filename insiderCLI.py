@@ -4,16 +4,16 @@ import os
 from urllib.parse import urlparse
 
 #Files
-TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp"
-REPORT_PATH = TMP_DIRECTORY + "/insider_report.json"
-INSIDER_LOG = TMP_DIRECTORY + "/insider.log"
+REPORT_PATH = "/insider_report.json"
+INSIDER_LOG =  "/insider.log"
 
 #Properties
 TARGET_LANG = "java"
 #insider --tech java --target /home/jenkins/vulnado/src
 
 class InsiderScanner:
-    def __init__(self):
+    def __init__(self, TMP_DIRECTORY):
+        self.TMP_DIRECTORY = TMP_DIRECTORY
         self.scan = self.Scan(self)
         
         self.target_lang = "--tech {} ".format(TARGET_LANG)
@@ -33,5 +33,5 @@ class InsiderScanner:
             logging.info('Launching Insider scanner for target {}'.format(self.insiderscanner.target_lang))
             with open(INSIDER_LOG, "a+") as insider_log:
                 insider_log.write(insider_cmd)
-                subprocess.call(insider_cmd,stdout=insider_log, shell=True, cwd=TMP_DIRECTORY)
-                os.rename(os.path.join(TMP_DIRECTORY,"report.json"), REPORT_PATH)
+                subprocess.call(insider_cmd,stdout=insider_log, shell=True, cwd=self.TMP_DIRECTORY)
+                os.rename(os.path.join(self.TMP_DIRECTORY,"report.json"), self.TMP_DIRECTORY+ REPORT_PATH)

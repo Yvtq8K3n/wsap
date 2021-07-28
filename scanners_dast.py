@@ -1,7 +1,6 @@
 from zap import ZapScanner
 from wapiti import WapitiScanner
 from urllib.parse import urlparse
-import psutil
 import subprocess
 import time
 import sys
@@ -9,38 +8,32 @@ import os
 import logging
 
 #Files
-TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp"
-ZAP_PROCESS_LOG =  TMP_DIRECTORY + "/zap_process.log"
-WAPITI_PROCESS_LOG = TMP_DIRECTORY + "/wapiti_process.log"
+TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp/"
+ZAP_PROCESS_LOG =  "/zap_process.log"
+WAPITI_PROCESS_LOG = "/wapiti_process.log"
 
 class ScannersDast:
-    def __init__(self, proxy_IpAddress, proxy_PortAddress, zap_APIkey):#, apikey, ip_address, port):
+    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, zap_APIkey):#, apikey, ip_address, port):
         parsedURL= urlparse(proxy_IpAddress)
+        PATH = TMP_DIRECTORY + urlparse(target_url).netloc
 
-        os.makedirs(TMP_DIRECTORY, exist_ok=True)
+        os.makedirs(PATH, exist_ok=True)
 
-        processes = list(p.name() for p in psutil.process_iter())
+        print ('Launching ZAP instance...')
+        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
+        "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
 
-        count = processes.count("zap.sh")
-
-        if count == 0:
-            print ('Launching ZAP instance...')
-            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
-            "-port", proxy_PortAddress],stdout=open(ZAP_PROCESS_LOG, "w"))
-
-            print ('Waiting for ZAP to load, 1 min...')
-            sleep(60)
-        else:
-            logging.info('A ZAP instance is already running!')
-
+        print ('Waiting for ZAP to load, 1 min...')
+        sleep(60)
+        
         #Parse IpAddress
         parsedIpAddress = parsedURL.netloc
         if ( parsedIpAddress is None or parsedIpAddress == ""):
             parsedIpAddress = parsedURL.path 
 
         #Initializing Scanners
-        self.zap = ZapScanner(parsedIpAddress, proxy_PortAddress, zap_APIkey) #zap
-        self.wapiti = WapitiScanner(parsedIpAddress, proxy_PortAddress) #Wapiti
+        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, zap_APIkey) #zap
+        self.wapiti = WapitiScanner(PATH, parsedIpAddress, proxy_PortAddress) #Wapiti
 
         #Creating inner classes     
         self.crawlers = self.Crawler(self)

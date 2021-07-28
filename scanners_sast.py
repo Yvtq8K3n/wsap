@@ -5,16 +5,17 @@ import sys
 import os
 import logging
 
-#Files
-TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp"
+TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp/"
 
 class ScannersSast:
-    def __init__(self):
-        os.makedirs(TMP_DIRECTORY, exist_ok=True)
-        print ('Launching Insider...')
+    def __init__(self, target_url):
+        PATH = TMP_DIRECTORY + urlparse(target_url).netloc
+
+        os.makedirs(PATH, exist_ok=True)
+        print ('Launching InsiderCLI...')
         
         #Initializing Scanners
-        self.insider = InsiderScanner() #Insider
+        self.insider = InsiderScanner(PATH)
 
          #Creating inner classes     
         self.scanner = self.Scanner(self)

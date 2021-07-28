@@ -7,9 +7,12 @@ from scan_mode import ScanMode
 from urllib.parse import urlparse
 
 '''
-/usr/bin/python3 /home/marquez/Desktop/wsap/main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --scanner.key vcvicclkl5kegm34aba9dhroem --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt/ --scan.apiDefinition file:///home/marquez/Desktop/openapi.json --performAttack --login.url http://target_url.com/api/authentication/login --login.request "{\"name\":\"name\",\"username\":\"username\",\"password\":\"password\"}" --login.userField username --login.passField password --login.user AltesBesta ItsSecret --login.user excuseme nope --login.user bob thebuilder
+/usr/bin/python3 main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --scanner.key vcvicclkl5kegm34aba9dhroem --target.url https://test-lm.void.pt --include.url https://test-lm.void.pt/robots.txt --include.url https://test-lm.void.pt/favicon.ico --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt/ --scan.apiDefinition openapi.json --login.url https://test-lm.void.pt/login --login.request "{\"cartId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField username --login.passField password --login.user admin@leiriamarket.pt "hud6&ç#R[f1"
 '''
+
 parser = argparse.ArgumentParser(prog='Web Security Application Project(WSAP)')
+
+parser.add_argument('-dT','--target.url', help='The url base of the target web application')
 
 #Sast
 sast_scanner = parser.add_argument_group('⭐SAST Scanner Properties⭐')
@@ -22,13 +25,11 @@ dast_scanner.add_argument('-dPort','--scanner.port', help='The current Port the 
 dast_scanner.add_argument('-dKey','--scanner.key', help='A Random Key value used by the scanner to authenticate to the API')
 
 dast_required = parser.add_argument_group('Required arguments')
-dast_required.add_argument('-dT','--targetUrl', help='The url base of the target web application')
 dast_required.add_argument('-dM','--scan.mode', type=ScanMode.argparse, choices=list(ScanMode), help='The scan mode being used')
 
 dast_optional = parser.add_argument_group('Optional arquments')
-dast_optional.add_argument('-dI','--includeUrl', action='append', help='Additional url to include into context (Can be used multiple times)')
-dast_optional.add_argument('-dE','--excludeUrl', action='append', help='Excude url from the context (Can be used multiple times)')
-dast_optional.add_argument('-dA','--performAttack', action='store_true', help='Activate the attack modules on to the target')
+dast_optional.add_argument('-dI','--include.url', action='append', help='Additional url to include into context (Can be used multiple times)')
+dast_optional.add_argument('-dE','--exclude.url', action='append', help='Excude url from the context (Can be used multiple times)')
 dast_optional.add_argument('--scan.apiUrl', help='Activate the attack modules on to the target')
 dast_optional.add_argument('--scan.apiDefinition', help='Activate the attack modules on to the target')
 
@@ -43,30 +44,39 @@ login_properties.add_argument('-u','--login.user',action='append',nargs=2, metav
 
 args = parser.parse_args()
 
+#Target
+target_url = getattr(args, 'target.url')
+
 #SAST SCANNER
 scanner_target = getattr(args, 'target')
 if (scanner_target is not None):
     print ('Starting SAST scan')
-    scanners_sast = ScannersSast()
+    scanners_sast = ScannersSast(target_url)
     scanners_sast.scanner.start(scanner_target)
 
 #DAST SCANNER
 scanner_ip = getattr(args, 'scanner.ip')
 scanner_port = getattr(args, 'scanner.port')
 scanner_key = getattr(args, 'scanner.key')
+
 if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not None):
-    print ('Starting DAST scan:')
-    print ('Creating instance...')
     scanner_ip = getattr(args, 'scanner.ip')
     scanner_port = getattr(args, 'scanner.port')
     scanner_key = getattr(args, 'scanner.key')
-    scanners_dast = ScannersDast(scanner_ip, scanner_port, scanner_key) #zap
+
+    print ('Starting DAST module:')
+    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scanner_key)
 
     print ('Creating profile...')
-    target_Url = getattr(args, 'targetUrl') #"https://test-lm.void.pt/" #"http://localhost:8090/bodgeit/"
-    include_Urls = getattr(args, 'includeUrl')
-    exclude_Urls = getattr(args, 'excludeUrl')
-    scanners_dast.createContext(target_Url, include_Urls, exclude_Urls)
+    include_Urls = getattr(args, 'include.url')
+    if include_Urls is None: 
+        include_Urls = []
+
+    exclude_Urls = getattr(args, 'exclude.url')
+    if exclude_Urls is None: 
+        exclude_Urls = []
+
+    scanners_dast.createContext(target_url, include_Urls, exclude_Urls)
 
     #3) Crawling / Exploring 
     # Full, OpenApi, Normal Crawl, Ajax Crawl, 
@@ -77,9 +87,8 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
     scanners_dast.crawlers.scan(scan_mode, scan_apiUrl, scan_apiDefitinion)
 
     #4) Attack
-    if args.performAttack is not None:
-        print ('Launching attack...')
-        scanners_dast.attacks.startActiveScan()
+    print ('Launching attack...')
+    scanners_dast.attacks.startActiveScan()
 
     #5) Display Alertsf
     #zap.alerts.display()S
