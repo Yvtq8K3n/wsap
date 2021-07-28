@@ -9,7 +9,7 @@ from pprint import pprint
 from urllib.parse import urlparse
 
 #Files
-ZAP_LOG =  "/zap.log"
+ZAP_PROCESS_LOG =  "/zap_process.log"
 STORE_URLS =  "/UrlEntries.txt"
 AUTH_SCRIPT =  os.path.dirname(__file__) + '/Scripts/jwtScript.js'
 
@@ -82,7 +82,7 @@ class ZapScanner:
             logging.info('Spider has completed!')
           
             # Prints the URLs the spider has crawled
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_PROCESS_LOG, 'a+') as zap_log:
                 zap_log.write('Spidering target {}'.format(self.zapscanner.context_name))
                 zap_log.write('\r\n'.join(map(str, self.zap.spider.results(scanID))))
             
@@ -104,7 +104,7 @@ class ZapScanner:
             logging.info('Spider has completed!')
 
             # Prints the URLs the spider has crawled
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_PROCESS_LOG, 'a+') as zap_log:
                 zap_log.write('Spidering as {0} target: {1}'.format(json_user["username"], self.zapscanner.context_name))
                 zap_log.write('\n'.join(map(str, self.zap.spider.results(scanID))))
             # If required post process the spider results
@@ -125,7 +125,7 @@ class ZapScanner:
             logging.info('Ajax Spider completed')
             ajaxResults = self.zap.ajaxSpider.results(start=0, count=10)
 
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_PROCESS_LOG, 'a+') as zap_log:
                 zap_log.write('Ajax Spider target {}'.format(self.zapscanner.context_name))
                 zap_log.write(json.dumps(ajaxResults, indent=4))
 
@@ -152,7 +152,7 @@ class ZapScanner:
             ajaxResults = self.zap.ajaxSpider.results(start=0, count=3)
             #print(json.dumps(ajaxResults, indent=4))
 
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG,'a+') as zap_log:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_PROCESS_LOG,'a+') as zap_log:
                 zap_log.write('Writing a sample of the ajax request performed')
                 json.dump(ajaxResults, zap_log, ensure_ascii=False, indent=4)
 
@@ -271,7 +271,7 @@ class ZapScanner:
 
             print('Writing alerts to file')
 
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_LOG, 'a+') as outfile:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_PROCESS_LOG, 'a+') as outfile:
                 json.dump(alerts, outfile, ensure_ascii=False, indent=4)
 
     class Authentication:
