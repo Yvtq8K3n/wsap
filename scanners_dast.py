@@ -39,6 +39,7 @@ class ScannersDast:
         self.crawlers = self.Crawler(self)
         self.attacks = self.Attack(self)
         self.authentications = self.Authentication(self)
+        self.alerts = self.Alert(self)
 
     def createContext(self, target_url, include_Urls, exclude_Urls):
         self.zap.createContext(target_url, include_Urls, exclude_Urls)
@@ -174,6 +175,16 @@ class ScannersDast:
 
             logging.warning("Wapiti: Authentication of requests is provided by ZAP Proxy")
             return user_id
+
+    class Alert:
+        def __init__(self, scanners):
+            self.zap = scanners.zap
+            self.wapiti = scanners.wapiti
+
+        def report(self):
+            print ("Generating report")
+            self.zap.alerts.report()
+
 
 def sleep(seconds):
     timeout = time.time() + seconds

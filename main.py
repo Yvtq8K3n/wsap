@@ -116,7 +116,7 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
         scanners_dast.attacks.startActiveScanAsUser(user_id)
 
     #6) Report
-    zap.alerts.report()
+    scanners_dast.alerts.report()
 
     # To close ZAP:
     #scanners_dast.shutdown()
