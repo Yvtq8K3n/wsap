@@ -91,7 +91,7 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
 
     #4) Attack
     print ('Launching attack...')
-    #scanners_dast.attacks.startActiveScan()
+    scanners_dast.attacks.startActiveScan()
 
     #5) Authenticate
     login_url = getattr(args, 'login.url')
