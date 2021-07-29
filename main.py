@@ -47,7 +47,7 @@ login_properties.add_argument('-u','--login.user',action='append',nargs=2, metav
 args = parser.parse_args()
 
 #Target
-target_url = getattr(args, 'target.url')
+target_url = getattr(args, 'target.url') #forçar como obrigatorio
 current_time = datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
 
 #SAST SCANNER
