@@ -13,7 +13,7 @@ ZAP_PROCESS_LOG =  "/zap_process.log"
 WAPITI_PROCESS_LOG = "/wapiti_process.log"
 
 class ScannersDast:
-    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, zap_APIkey, current_time):#, apikey, ip_address, port):
+    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, current_time):#, ip_address, port):
         parsedURL= urlparse(proxy_IpAddress)
         PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
 
@@ -32,7 +32,7 @@ class ScannersDast:
             parsedIpAddress = parsedURL.path 
 
         #Initializing Scanners
-        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, zap_APIkey) #zap
+        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, "vcvicclkl5kegm34aba9dhroem") #zap
         self.wapiti = WapitiScanner(PATH, parsedIpAddress, proxy_PortAddress) #Wapiti
 
         #Creating inner classes     
@@ -41,8 +41,8 @@ class ScannersDast:
         self.authentications = self.Authentication(self)
         self.alerts = self.Alert(self)
 
-    def createContext(self, target_url, include_Urls, exclude_Urls):
-        self.zap.createContext(target_url, include_Urls, exclude_Urls)
+    def createContext(self, target_url, include_Urls, exclude_Urls, current_time):
+        self.zap.createContext(target_url, include_Urls, exclude_Urls, current_time)
         self.wapiti.createContext(target_url, include_Urls, exclude_Urls)
 
     def shutdown(self):

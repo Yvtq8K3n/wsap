@@ -28,15 +28,13 @@ class ZapScanner:
         self.alerts = self.Alert(self)
         self.authentications = self.Authentication(self)
 
-    def createContext(self, target_url, include_urls, exclude_urls):
+    def createContext(self, target_url, include_urls, exclude_urls, current_time):
         targetUrlParsed = urlparse(target_url)
-        print (target_url)
-        #self.zap.context.remove_context(targetUrlParsed.hostname)
-
+        
         logging.info("ZAP: Creating Context")
-        self.context_name = targetUrlParsed.hostname
+        self.context_name = targetUrlParsed.hostname + "_" +current_time
         self.context_id = self.zap.context.new_context(self.context_name)
-        print(self.context_id)
+        print("New context created for "+self.context_name+" with id:"+self.context_id)
 
         # include target url
         self.target_url = target_url
@@ -254,19 +252,21 @@ class ZapScanner:
 
             alerts = self.zap.alert.alerts(baseurl=self.zapscanner.target_url,start=st, count=pg)
             blacklist = [1,2]
+
             while len(alerts) > 0:
                 print('Reading ' + str(pg) + ' alerts from ' + str(st))
                 alert_count += len(alerts)
                 for alert in alerts:
-                    plugin_id = alert.get('pluginId')
-                    if plugin_id in blacklist:
-                        continue
-                    if alert.get('risk') == 'High':
-                        # Trigger any relevant postprocessing
-                        continue
-                    if alert.get('risk') == 'Informational':
-                        # Ignore all info alerts - some of them may have been downgraded by security annotations
-                        continue
+                    if alert is not None:
+                        plugin_id = alert.get('pluginId')
+                        if plugin_id in blacklist:
+                            continue
+                        # if alert.get('risk') == 'High':
+                            # Trigger any relevant postprocessing
+                            # continue
+                        if alert.get('risk') == 'Informational':
+                            # Ignore all info alerts - some of them may have been downgraded by security annotations
+                            continue
                     alert_dict.append(alert)
                 st += pg
                 alerts = self.zap.alert.alerts(baseurl=self.zapscanner.target_url, start=st, count=pg)

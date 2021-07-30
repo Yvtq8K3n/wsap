@@ -24,7 +24,6 @@ sast_scanner.add_argument('-sT','--target', help='The target web application dir
 dast_scanner = parser.add_argument_group('⭐DAST Scanner Properties⭐', 'Scanner Properties:')
 dast_scanner.add_argument('-dIp','--scanner.ip', help='The current Scanner IP Address')
 dast_scanner.add_argument('-dPort','--scanner.port', help='The current Port the scanner is listening too')
-dast_scanner.add_argument('-dKey','--scanner.key', help='A Random Key value used by the scanner to authenticate to the API')
 
 dast_required = parser.add_argument_group('Required arguments')
 dast_required.add_argument('-dM','--scan.mode', type=ScanMode.argparse, choices=list(ScanMode), help='The scan mode being used')
@@ -60,15 +59,11 @@ if (scanner_target is not None):
 #DAST SCANNER
 scanner_ip = getattr(args, 'scanner.ip')
 scanner_port = getattr(args, 'scanner.port')
-scanner_key = getattr(args, 'scanner.key')
 
-if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not None):
-    scanner_ip = getattr(args, 'scanner.ip')
-    scanner_port = getattr(args, 'scanner.port')
-    scanner_key = getattr(args, 'scanner.key')
+if (scanner_ip is not None) or (scanner_port is not None):
 
     print ('Starting DAST module:')
-    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scanner_key, current_time)
+    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, current_time)
 
     print ('Creating profile...')
     include_Urls = getattr(args, 'include.url')
@@ -79,7 +74,7 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
     if exclude_Urls is None: 
         exclude_Urls = []
 
-    scanners_dast.createContext(target_url, include_Urls, exclude_Urls)
+    scanners_dast.createContext(target_url, include_Urls, exclude_Urls, current_time)
 
     #3) Crawling / Exploring 
     # Full, OpenApi, Normal Crawl, Ajax Crawl, 
