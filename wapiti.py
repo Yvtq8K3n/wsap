@@ -4,7 +4,7 @@ import os
 from urllib.parse import urlparse
 
 #Files
-REPORT_PATH = "/wapiti_report.json"
+REPORT_PATH = "wapiti_report.json"
 URL_ENTRIES = "/UrlEntries.txt"
 STORE_SESSION = "/Wapiti"
 WAPITI_LOG = "/wapiti.log"
@@ -24,7 +24,6 @@ class WapitiScanner:
         
         #Due to persistence issuies it is required params to added everytime
         self.wapiti_storage_cmd = "--store-session {} ".format(self.TMP_DIRECTORY + STORE_SESSION)
-        self.wapiti_report_cmd = "--format json --output {} ".format(self.TMP_DIRECTORY + REPORT_PATH)
         self.wapiti_excluded_cmd = ""
 
         if (proxy_IpAddress==None):
@@ -83,7 +82,7 @@ class WapitiScanner:
             self.wapitiscanner = wapitiscanner
             self.depth = 4
 
-        def scanTradional(self, depth=DEFAULT_SCAN_DEPTH):
+        def scanTradional(self, username="",depth=DEFAULT_SCAN_DEPTH):
             logging.info("Setting up the pre-defined constrains")
             wapiti_cmd = "wapiti -u {} ".format(self.wapitiscanner.target_url)
             wapiti_cmd += self.wapitiscanner.wapiti_excluded_cmd
@@ -93,14 +92,14 @@ class WapitiScanner:
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
-            wapiti_cmd += self.wapitiscanner.wapiti_report_cmd
+            wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + username + REPORT_PATH)
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
             with open(self.wapitiscanner.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
                 wapiti_log.write(wapiti_cmd)
                 subprocess.call(wapiti_cmd,stdout=wapiti_log, shell=True)
 
-        def readUrlEntries(self, urlEntriesFilename):
+        def readUrlEntries(self, urlEntriesFilename, username=""):
             logging.info("Setting up the pre-defined constrains")
             wapiti_cmd = "wapiti -u {} ".format(self.wapitiscanner.target_url)
             wapiti_cmd += self.wapitiscanner.wapiti_excluded_cmd
@@ -111,7 +110,7 @@ class WapitiScanner:
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
-            wapiti_cmd += self.wapitiscanner.wapiti_report_cmd
+            wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + username + REPORT_PATH)
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
             with open(self.wapitiscanner.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
@@ -122,7 +121,7 @@ class WapitiScanner:
         def __init__(self, wapitiscanner):
             self.wapitiscanner = wapitiscanner
 
-        def startActiveScan(self):
+        def startActiveScan(self, username=""):
             logging.info("Setting up the pre-defined constrains")
             wapiti_cmd = "wapiti -u {} ".format(self.wapitiscanner.target_url)
             wapiti_cmd += self.wapitiscanner.wapiti_excluded_cmd
@@ -132,7 +131,8 @@ class WapitiScanner:
             wapiti_cmd += "-m {} ".format(FULL_MODULE_ATTACK)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
-            wapiti_cmd += self.wapitiscanner.wapiti_report_cmd
+            wapiti_cmd += "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + username + REPORT_PATH)
+
 
             #Additional Options
             wapiti_cmd += "-f json "

@@ -112,11 +112,11 @@ if (scanner_ip is not None) or (scanner_port is not None) or (scanner_key is not
             field_username=login_usernameFieldName, field_password=login_passwordFieldName)
         
         #2) Scan
-        scanners_dast.crawlers.scanAsUser(scan_mode,user_id)
+        scanners_dast.crawlers.scanAsUser(scan_mode,user_id, username)
         
         #3) Perform Attack
         print ('Launching attack...')
-        scanners_dast.attacks.startActiveScanAsUser(user_id)
+        scanners_dast.attacks.startActiveScanAsUser(user_id, username)
 
     #6) Report
     scanners_dast.alerts.report()

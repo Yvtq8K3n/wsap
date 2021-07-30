@@ -31,7 +31,7 @@ class InsiderScanner:
             insider_cmd += "--target {} ".format(target_proj_dir)
 
             logging.info('Launching Insider scanner for target {}'.format(self.insiderscanner.target_lang))
-            with open(INSIDER_LOG, "a+") as insider_log:
+            with open(self.insiderscanner.TMP_DIRECTORY + INSIDER_LOG, "a+") as insider_log:
                 insider_log.write(insider_cmd)
-                subprocess.call(insider_cmd,stdout=insider_log, shell=True, cwd=self.TMP_DIRECTORY)
-                os.rename(os.path.join(self.TMP_DIRECTORY,"report.json"), self.TMP_DIRECTORY+ REPORT_PATH)
+                subprocess.call(insider_cmd,stdout=insider_log, shell=True, cwd=self.insiderscanner.TMP_DIRECTORY)
+                os.rename(os.path.join(self.insiderscanner.TMP_DIRECTORY,"report.json"), self.insiderscanner.TMP_DIRECTORY + REPORT_PATH)

@@ -92,7 +92,7 @@ class ZapScanner:
                 raise Exception("Can't scan as user because User Mode is not enabled")
 
             user = self.zap.users.get_user_by_id(self.zapscanner.context_id, user_id)
-            json_user = json.loads((user))
+            json_user = json.loads(user)
 
             logging.info('Spidering as {0} target: {1}'.format(json_user["username"], self.zapscanner.context_name))
             scanID = self.zap.spider.scan_as_user(contextid = self.zapscanner.context_id, userid=user_id, url=self.zapscanner.target_url)
@@ -247,11 +247,12 @@ class ZapScanner:
 
         def report(self):
             # Retrieve the alerts using paging in case there are lots of them
+            alert_dict = []
             st = 0
             pg = 5000
             alert_count = 0
 
-            alerts = self.zap.alert.alerts(start=st, count=pg)
+            alerts = self.zap.alert.alerts(baseurl=self.zapscanner.target_url,start=st, count=pg)
             blacklist = [1,2]
             while len(alerts) > 0:
                 print('Reading ' + str(pg) + ' alerts from ' + str(st))
@@ -266,13 +267,16 @@ class ZapScanner:
                     if alert.get('risk') == 'Informational':
                         # Ignore all info alerts - some of them may have been downgraded by security annotations
                         continue
+                    alert_dict.append(alert)
                 st += pg
-                alerts = self.zap.alert.alerts(start=st, count=pg)
+                alerts = self.zap.alert.alerts(baseurl=self.zapscanner.target_url, start=st, count=pg)
             print('Total number of alerts: ' + str(alert_count))
 
             print('Writing alerts to file')
             with open(self.zapscanner.TMP_DIRECTORY+ZAP_REPORT, 'a+') as outfile:
-                json.dump(alerts, outfile, ensure_ascii=False, indent=4)
+                json.dump(alert_dict, outfile, ensure_ascii=False, indent=4)
+
+                
 
     class Authentication:
 
