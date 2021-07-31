@@ -161,15 +161,17 @@ class ZapScanner:
 
             logging.info('OpenApi Reading target {}'.format(self.zapscanner.context_name))
             apiDefinitionParsed = urlparse(apiDefinitionURI)
+            print (apiDefinitionParsed)
 
-            if (apiDefinitionParsed.scheme=="file"):
-                logging.info("Importing api definition from file")
-                self.zap.openapi.import_file(apiDefinitionParsed.path, apiUrl)
-            elif (apiDefinitionParsed.scheme=="http" or apiDefinitionParsed.scheme=="https"):
+            if (apiDefinitionParsed.scheme=="http" or apiDefinitionParsed.scheme=="https"):
                 logging.info("Importing api definition from url")
                 self.zap.openapi.import_url(apiDefinitionParsed.path, apiUrl)
             else:
-                logging.warning("Scheme Format Not Supported")
+                try:
+                    logging.info("Attempting to importing api definition from file")
+                    self.zap.openapi.import_file(apiDefinitionParsed.path, apiUrl)
+                except:
+                   logging.warning("Scheme Format Not Supported")
 
         def exportUrlScanEntries(self):
             urlEntries = self.zap.context.urls(self.zapscanner.context_name)

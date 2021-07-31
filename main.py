@@ -9,7 +9,7 @@ from scan_mode import ScanMode
 from urllib.parse import urlparse
 
 '''
-/usr/bin/python3 main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --scanner.key vcvicclkl5kegm34aba9dhroem --target.url https://test-lm.void.pt --include.url https://test-lm.void.pt/robots.txt --include.url https://test-lm.void.pt/favicon.ico --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt/ --scan.apiDefinition openapi.json --login.url https://test-lm-api.void.pt/authentication/login --login.request "{\"cartId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField email --login.passField password --login.user admin@leiriamarket.pt "hud6&ç#R[f1"
+/usr/bin/python3 main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --target.url https://test-lm.void.pt --include.url https://test-lm.void.pt/robots.txt --include.url https://test-lm.void.pt/favicon.ico --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt --scan.apiDefinition /home/marquez/Desktop/wsap/tmp/openapi.json --login.url https://test-lm-api.void.pt/authentication/login --login.request "{\"cartId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField email --login.passField password --login.user admin@leiriamarket.pt "hud6&ç#R[f1"
 '''
 
 parser = argparse.ArgumentParser(prog='Web Security Application Project(WSAP)')
