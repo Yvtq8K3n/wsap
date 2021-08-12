@@ -1,15 +1,19 @@
 import argparse
 import json
 from logging import currentframe
+import logging
 import urllib
 from datetime import datetime
 from scanners_sast import ScannersSast
 from scanners_dast import ScannersDast
+from vunerabilty_audit import VulnerabilityAudit
 from scan_mode import ScanMode
 from urllib.parse import urlparse
 
 '''
 /usr/bin/python3 main.py --scanner.ip http://127.0.0.1 --scanner.port 8010 --target.url https://test-lm.void.pt --include.url https://test-lm.void.pt/robots.txt --include.url https://test-lm.void.pt/favicon.ico --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt --scan.apiDefinition /home/marquez/Desktop/wsap/tmp/openapi.json --login.url https://test-lm-api.void.pt/authentication/login --login.request "{\"cartId\":\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField email --login.passField password --login.user admin@leiriamarket.pt "hud6&ç#R[f1"
+
+python3 /home/marquez/Desktop/wsap/main.py --target.url https://test-lm.void.pt --scanner.ip 127.0.0.1 --scanner.port 8010 --target /home/jenkins/vulnado --scan.mode FULL --scan.apiUrl https://test-lm-api.void.pt --scan.apiDefinition file:///home/marquez/Desktop/wsap/tmp/openapi.json --login.url https://test-lm-api.void.pt/authentication/login --login.request "{\"cartId:\"3fa85f64-5717-4562-b3fc-2c963f66afa6\",\"email\":\"string\",\"password\":\"string\"}" --login.userField username --login.passField password --login.user "email" "password" --login.user "admin@leiriamarket.pt" "hud6&ç#R[f1"
 '''
 
 parser = argparse.ArgumentParser(prog='Web Security Application Project(WSAP)')
@@ -49,6 +53,7 @@ args = parser.parse_args()
 target_url = getattr(args, 'target.url') #forçar como obrigatorio
 current_time = datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
 
+'''
 #SAST SCANNER
 scanner_target = getattr(args, 'target')
 if (scanner_target is not None):
@@ -91,6 +96,7 @@ if (scanner_ip is not None) or (scanner_port is not None):
     #5) Authenticate
     login_url = getattr(args, 'login.url')
     login_Request = urllib.parse.unquote(getattr(args, 'login.request'))
+    print(login_Request)
     login_JSON_Request = json.loads(login_Request)
     login_usernameFieldName = getattr(args, 'login.userField') 
     login_passwordFieldName = getattr(args, 'login.passField')
@@ -117,4 +123,8 @@ if (scanner_ip is not None) or (scanner_port is not None):
     scanners_dast.alerts.report()
 
     # To close ZAP:
-    #scanners_dast.shutdown()
+    scanners_dast.shutdown()
+'''
+
+users = getattr(args, 'login.user')
+vulnerabilty_audit = VulnerabilityAudit(target_url, current_time, users)

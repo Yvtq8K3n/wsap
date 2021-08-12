@@ -4,7 +4,7 @@ import os
 from urllib.parse import urlparse
 
 #Files
-REPORT_PATH = "wapiti_report.json"
+REPORT_PATH = "/wapiti_report"
 URL_ENTRIES = "/UrlEntries.txt"
 STORE_SESSION = "/Wapiti"
 WAPITI_LOG = "/wapiti.log"
@@ -92,7 +92,7 @@ class WapitiScanner:
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
-            wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + username + REPORT_PATH)
+            wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + REPORT_PATH + "_" + username + ".json")
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
             with open(self.wapitiscanner.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
@@ -110,7 +110,7 @@ class WapitiScanner:
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
-            wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + username + REPORT_PATH)
+            wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + REPORT_PATH + "_" + username + ".json")
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
             with open(self.wapitiscanner.TMP_DIRECTORY + WAPITI_LOG, "a+") as wapiti_log:
@@ -131,7 +131,7 @@ class WapitiScanner:
             wapiti_cmd += "-m {} ".format(FULL_MODULE_ATTACK)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
             wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd
-            wapiti_cmd += "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + "/" + username + REPORT_PATH)
+            wapiti_cmd += "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + REPORT_PATH + "_" + username + ".json")
 
 
             #Additional Options

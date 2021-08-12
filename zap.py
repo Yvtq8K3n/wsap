@@ -198,8 +198,6 @@ class ZapScanner:
 
             # Print Passive scan results/alerts
             print('Hosts: {}'.format(', '.join(self.zap.core.hosts)))
-            print('Alerts: ')
-            pprint(self.zap.core.alerts())
 
         def startActiveScan(self):
             print('Active Scanning target {}'.format(self.zapscanner.context_name))
@@ -216,8 +214,6 @@ class ZapScanner:
             print('Active Scan completed')
             # Print vulnerabilities found by the scanning
             print('Hosts: {}'.format(', '.join(self.zap.core.hosts)))
-            print('Alerts: ')
-            pprint(self.zap.core.alerts(baseurl=self.zapscanner.target_url))
 
         def startActiveScanAsUser(self, user_id):
             if not self.zapscanner.authentications.isUseModeSet:

@@ -5,3 +5,6 @@ __pycache__/zap_dast.cpython-38.pyc
 Install/wapitiInstall
 tmp/*
 __pycache__/scanners_sast.cpython-38.pyc
+__pycache__/vunerabilty_audit.cpython-38.pyc
+__pycache__/wapiti.cpython-38.pyc
+__pycache__/zap.cpython-38.pyc
