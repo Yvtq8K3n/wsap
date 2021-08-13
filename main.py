@@ -53,13 +53,14 @@ args = parser.parse_args()
 target_url = getattr(args, 'target.url') #forçar como obrigatorio
 current_time = datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
 
-'''
+
 #SAST SCANNER
 scanner_target = getattr(args, 'target')
 if (scanner_target is not None):
     print ('Starting SAST scan')
     scanners_sast = ScannersSast(target_url, current_time)
     scanners_sast.scanner.start(scanner_target)
+
 
 #DAST SCANNER
 scanner_ip = getattr(args, 'scanner.ip')
@@ -85,8 +86,8 @@ if (scanner_ip is not None) or (scanner_port is not None):
     # Full, OpenApi, Normal Crawl, Ajax Crawl, 
     print ('Launching crawler...')
     scan_mode = getattr(args, 'scan.mode')
-    scan_apiUrl = getattr(args, 'scan.apiUrl') #"https://test-lm-api.void.pt/"
-    scan_apiDefitinion = getattr(args, 'scan.apiDefinition') #"file:///home/marquez/Desktop/openapi.json"
+    scan_apiUrl = getattr(args, 'scan.apiUrl')
+    scan_apiDefitinion = getattr(args, 'scan.apiDefinition')
     scanners_dast.crawlers.scan(scan_mode, scan_apiUrl, scan_apiDefitinion)
 
     #4) Attack
@@ -124,7 +125,7 @@ if (scanner_ip is not None) or (scanner_port is not None):
 
     # To close ZAP:
     scanners_dast.shutdown()
-'''
+
 
 users = getattr(args, 'login.user')
 vulnerabilty_audit = VulnerabilityAudit(target_url, current_time, users)

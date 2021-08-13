@@ -20,7 +20,7 @@ class ScannersDast:
         os.makedirs(PATH, exist_ok=True)
 
         print ('Launching ZAP instance...')
-        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
+        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "sqliplugin", "-config", "api.disablekey=true",
         "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
 
         print ('Waiting for ZAP to load, 1 min...')

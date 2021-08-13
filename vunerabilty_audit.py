@@ -21,8 +21,7 @@ INFO_LEVEL = 0
 
 class VulnerabilityAudit:
     def __init__(self, target_url, current_time, users):
-        #PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
-        PATH = "/home/marquez/Desktop/wsap/tmp/test-lm.void.pt_2021_08_10_12:04:38"
+        PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
 
         os.makedirs(PATH, exist_ok=True)
         print ('Processing reports...')
