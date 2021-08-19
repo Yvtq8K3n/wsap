@@ -84,7 +84,7 @@ if (scanner_ip is not None) or (scanner_port is not None):
 
     #3) Crawling / Exploring 
     # Full, OpenApi, Normal Crawl, Ajax Crawl, 
-    '''print ('Launching crawler...')
+    print ('Launching crawler...')
     scan_mode = getattr(args, 'scan.mode')
     scan_apiUrl = getattr(args, 'scan.apiUrl')
     scan_apiDefitinion = getattr(args, 'scan.apiDefinition')
@@ -92,7 +92,7 @@ if (scanner_ip is not None) or (scanner_port is not None):
 
     #4) Attack
     print ('Launching attack...')
-    scanners_dast.attacks.startActiveScan()'''
+    scanners_dast.attacks.startActiveScan()
 
     #5) Authenticate
     login_url = getattr(args, 'login.url')
