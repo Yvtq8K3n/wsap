@@ -20,7 +20,7 @@ class ScannersDast:
         os.makedirs(PATH, exist_ok=True)
 
         print ('Launching ZAP instance...')
-        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "sqliplugin", "-config", "api.disablekey=true",
+        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "sqliplugin", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
         "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
 
         print ('Waiting for ZAP to load, 1 min...')
@@ -68,10 +68,8 @@ class ScannersDast:
         def scanAsUser(self, scan_type, user_id, username):
             print ('Selecting scan method: '+scan_type.name)
 
-            if (scan_type.name=='FULL'):
+            if (scan_type.name=='FULL') or (scan_type.name=='APIONLY'):
                 self.fullScanAsUser(user_id, username)
-            elif(scan_type.name=='APIONLY'):
-                raise Exception ("APIONLY: Not support as User")
             elif(scan_type.name=='TRADITIONAL'):
                 self.scanTradionalAsUser(user_id, username)
             elif(scan_type.name=='AJAX'):
@@ -80,23 +78,29 @@ class ScannersDast:
         def scanTradional(self):
             print("ZAP: Starting traditional scanning")
             self.zap.crawlers.scanTradional()
+            self.zap.saveState()
 
             print("Wapiti: Starting traditional scanning")
             self.wapiti.crawlers.scanTradional()
+            self.zap.restoreState()
 
         def scanTradionalAsUser(self, user_id, username):
             self.zap.authentications.forceUserMode(user_id)
 
             print("ZAP: Starting traditional scanning with user: "+user_id)
             self.zap.crawlers.scanTradionalAsUser(user_id)
+            self.zap.saveState()
             
             print("Wapiti: Starting traditional authenticated via ZAP Proxy")
             self.wapiti.crawlers.scanTradional(username)
+            self.zap.restoreState()
 
             self.zap.authentications.releaseUserMode()
+        
         def scanAjax(self):
             print("ZAP: Starting AJAX scanning")
             self.zap.crawlers.scanTradional()
+            self.zap.saveState()
 
             logging.warning("Wapiti: doens't support AJAX scanning")
 
@@ -105,6 +109,7 @@ class ScannersDast:
 
             print("ZAP: Starting AJAX scanning with user: "+user_id)
             self.zap.crawlers.scanTradional()
+            self.zap.saveState()
             logging.warning("Wapiti: doens't support AJAX scanning")
 
             self.zap.authentications.releaseUserMode()
@@ -114,12 +119,14 @@ class ScannersDast:
                 raise Exception('Please provide a valid APIURL and APIDefinition')
             print("ZAP: Starting to read OpenAPI definition entries")
             self.zap.crawlers.readOpenApi(apiUrl, apiDefinitionURI)
+            self.zap.saveState()
             
-            logging.warning("Wapiti: Doesnt support OpenAPI definitions natively")
+            logging.warning("Wapiti: does not support OpenAPI scheme natively")
             print("Wapiti: Using entries retrieved by Zap instead")
 
-            urlEntries = self.zap.crawlers.exportUrlScanEntries()
-            self.wapiti.crawlers.readUrlEntries(urlEntries)
+            self.zap.crawlers.exportUrlScanEntries()
+            self.wapiti.crawlers.readUrlEntries()
+            self.zap.restoreState()
 
         def fullScan(self, apiUrl, apiDefinitionURI):
             self.scanTradional()
@@ -129,7 +136,8 @@ class ScannersDast:
         def fullScanAsUser(self, user_id, username):
             self.scanTradionalAsUser(user_id, username)
             self.scanAjaxAsUser(user_id, username)
-            logging.warning("OpenAPI definition will not be loaded when scanning as User")
+            logging.warning("Wapiti: OpenAPI entries will be loaded from previous scan")
+            self.wapiti.crawlers.readUrlEntries(username)
 
     class Attack:
         def __init__(self, scanners):
@@ -140,16 +148,18 @@ class ScannersDast:
             print("ZAP: Starting passive scanning")
             self.zap.attacks.startPassiveScan()
 
-            logging.warning("Wapiti: Doesn't support passive scanning")
+            logging.warning("Wapiti: does not support passive scanning")
 
         def startActiveScan(self):
             logging.warning("Active scanning my overload the target machine")
 
             print("ZAP: Starting active scanning")
             self.zap.attacks.startActiveScan()
+            self.zap.saveState()
 
             print("Wapiti: Start active scanning")
             self.wapiti.attacks.startActiveScan()
+            self.zap.restoreState()
 
         def startActiveScanAsUser(self, user_id, username):
             logging.warning("Active scanning my overload the target machine")
@@ -157,9 +167,11 @@ class ScannersDast:
 
             print("ZAP: Starting active scanning with user: "+user_id)
             self.zap.attacks.startActiveScanAsUser(user_id)
+            self.zap.saveState()
 
             print("Wapiti: Starting active scanning authenticated via ZAP Proxy")
             self.wapiti.attacks.startActiveScan(username)
+            self.zap.restoreState()
 
             self.zap.authentications.releaseUserMode()
         

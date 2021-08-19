@@ -28,6 +28,7 @@ function sendingRequest(msg, initiator, helper) {
      return;
   }
   
+  logger('Url: ' + msg.getRequestHeader().getURI().toString())
   logger("Adding authorization header token" + (' ' + token).slice(0, 20))
   var headers = msg.getRequestHeader();
   msg.getRequestHeader().setHeader('Authorization', token);
@@ -61,11 +62,9 @@ function responseReceived(msg, initiator, helper) {
   //Retrieve Authorization Token from header
   token = msg.getResponseHeader().getHeader("Authorization")
   
-  print("token:"+ token)  
-  print("RequestHeader: "+ msg.getRequestHeader())
-  print("RequestBody: "+msg.getRequestBody())
-  print("ResponseHeader: "+resheaders)
-  print("ResponseBody: "+resbody)
+  logger("token:"+ token)
+  logger("ResponseHeader: "+resheaders)
+  logger("ResponseBody: "+resbody)
 
   // If auth request was not succesful move on
   if (token.length==0) {return;}

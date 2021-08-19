@@ -11,7 +11,8 @@ from urllib.parse import urlparse
 #Files
 ZAP_PROCESS_LOG =  "/zap_process.log"
 ZAP_REPORT =  "/zap_report.json"
-STORE_URLS =  "/UrlEntries.txt"
+STORE_URLS =  "/api_endpoints.txt"
+ZAP_URLS =  "/zap_endpoints.txt"
 AUTH_SCRIPT =  os.path.dirname(__file__) + '/Scripts/jwtScript.js'
 
 class ZapScanner:
@@ -54,7 +55,32 @@ class ZapScanner:
 
         for url in exclude_urls:
             self.zap.context.exclude_from_context(self.context_name, url)
+            self.zap.context.exclude_from_context(self.context_name+"/.*", url)
             logging.info('Excluded %s and its subpaths', url)
+
+    def saveState(self):
+        logging.info("Saving in memory Zap current state")
+        self.urls = self.zap.context.urls(self.context_name)
+        print("Urls found: " + str(len(self.urls)))
+
+        print("Writing into file: " + self.TMP_DIRECTORY + ZAP_URLS)
+        jsonUrls = json.dumps(self.urls)
+
+        with open(self.TMP_DIRECTORY + ZAP_URLS, "w") as url_entries:
+            url_entries.write(json.dumps(self.urls, indent=4))     
+
+    def restoreState(self):
+        print("Urls in zap: " + str(len(self.zap.context.urls(self.context_name))))
+
+        print("Restoring Zap to its initial state")
+        self.total_urls = self.zap.context.urls(self.context_name)
+        self.fuzzer_urls = list(set(self.total_urls) - set(self.urls))
+
+        for url in self.fuzzer_urls:
+            logging.info("- Removing invalid url: "+ url)
+            self.zap.core.delete_site_node(url)
+
+        print("Urls in zap after: " + str(len(self.zap.context.urls(self.context_name))))
 
     def shutdown(self):
         self.zap.core.shutdown()
@@ -212,8 +238,6 @@ class ZapScanner:
                 time.sleep(5)
 
             print('Active Scan completed')
-            # Print vulnerabilities found by the scanning
-            print('Hosts: {}'.format(', '.join(self.zap.core.hosts)))
 
         def startActiveScanAsUser(self, user_id):
             if not self.zapscanner.authentications.isUseModeSet:
@@ -236,7 +260,6 @@ class ZapScanner:
             print('Hosts: {}'.format(', '.join(self.zap.core.hosts)))
 
     class Alert:
-        
         def __init__(self, zapscanner):
             self.zapscanner = zapscanner
             self.zap = zapscanner.zap
@@ -274,10 +297,8 @@ class ZapScanner:
             with open(self.zapscanner.TMP_DIRECTORY+ZAP_REPORT, 'a+') as outfile:
                 json.dump(alert_dict, outfile, ensure_ascii=False, indent=4)
 
-                
-
+    
     class Authentication:
-
         def __init__(self, zapscanner):
             self.zapscanner = zapscanner
             self.zap = zapscanner.zap
