@@ -294,7 +294,7 @@ class ZapScanner:
             print('Total number of alerts: ' + str(alert_count))
 
             print('Writing alerts to file')
-            with open(self.zapscanner.TMP_DIRECTORY+ZAP_REPORT, 'a+') as outfile:
+            with open(self.zapscanner.TMP_DIRECTORY+ZAP_REPORT, 'w') as outfile:
                 json.dump(alert_dict, outfile, ensure_ascii=False, indent=4)
 
     

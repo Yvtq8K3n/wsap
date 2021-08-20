@@ -23,7 +23,7 @@ class WapitiScanner:
         self.attacks = self.Attack(self)
         
         #Due to persistence issuies it is required params to added everytime
-        self.wapiti_storage_cmd = "--store-session {} ".format(self.TMP_DIRECTORY + STORE_SESSION)
+        self.wapiti_storage_cmd = "--store-session {}".format(self.TMP_DIRECTORY + STORE_SESSION)
         self.wapiti_included_cmd = ""
         self.wapiti_excluded_cmd = ""
 
@@ -80,7 +80,7 @@ class WapitiScanner:
             wapiti_cmd += "-d {} ".format(depth)
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
-            wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd + user_path
+            wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd + user_path + " "
         
             wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + REPORT_PATH + user_path + ".json")
 
@@ -105,7 +105,7 @@ class WapitiScanner:
             wapiti_cmd += "--start {} ".format(self.wapitiscanner.TMP_DIRECTORY + URL_ENTRIES)
             wapiti_cmd += "-m {} ".format(INVALID_MODULE)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
-            wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd + user_path
+            wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd + user_path + " "
             wapiti_cmd +=  "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + REPORT_PATH + user_path + ".json")
 
             logging.info('Spidering target {}'.format(self.wapitiscanner.context_name))
@@ -132,7 +132,7 @@ class WapitiScanner:
             logging.info("Setting up the scan custom properties")
             wapiti_cmd += "-m {} ".format(FULL_MODULE_ATTACK)
             wapiti_cmd += self.wapitiscanner.wapiti_proxy_cmd
-            wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd + user_path
+            wapiti_cmd += self.wapitiscanner.wapiti_storage_cmd + user_path + " "
             wapiti_cmd += "--format json --output {} ".format(self.wapitiscanner.TMP_DIRECTORY + REPORT_PATH + user_path + ".json")
 
             print(wapiti_cmd)

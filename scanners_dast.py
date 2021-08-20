@@ -5,6 +5,7 @@ import subprocess
 import time
 import sys
 import os
+import uuid
 import logging
 
 #Files
@@ -19,8 +20,12 @@ class ScannersDast:
 
         os.makedirs(PATH, exist_ok=True)
 
+        print("Generating random ZAP API key")
+        api_key = uuid.uuid4().get_hex()
+        print("API_KEY: "+api_key)
+
         print ('Launching ZAP instance...')
-        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "sqliplugin", "-config", "api.key=vcvicclkl5kegm34aba9dhroem",
+        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "sqliplugin", "-config", "api.key="+api_key,
         "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
 
         print ('Waiting for ZAP to load, 1 min...')
@@ -32,7 +37,7 @@ class ScannersDast:
             parsedIpAddress = parsedURL.path 
 
         #Initializing Scanners
-        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, "vcvicclkl5kegm34aba9dhroem") #zap
+        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, "vcvicclkl5kegm34aba9dhroef") #zap
         self.wapiti = WapitiScanner(PATH, parsedIpAddress, proxy_PortAddress) #Wapiti
 
         #Creating inner classes     
