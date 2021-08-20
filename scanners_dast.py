@@ -21,7 +21,7 @@ class ScannersDast:
         os.makedirs(PATH, exist_ok=True)
 
         print("Generating random ZAP API key")
-        api_key = uuid.uuid4().get_hex()
+        api_key = uuid.uuid4().hex
         print("API_KEY: "+api_key)
 
         print ('Launching ZAP instance...')
