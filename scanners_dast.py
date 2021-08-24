@@ -37,7 +37,7 @@ class ScannersDast:
             parsedIpAddress = parsedURL.path 
 
         #Initializing Scanners
-        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, "vcvicclkl5kegm34aba9dhroef") #zap
+        self.zap = ZapScanner(PATH, parsedIpAddress, proxy_PortAddress, api_key) #zap
         self.wapiti = WapitiScanner(PATH, parsedIpAddress, proxy_PortAddress) #Wapiti
 
         #Creating inner classes     
