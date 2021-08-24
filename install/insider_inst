@@ -1,3 +1,0 @@
-cd $HOME
-export PATH=$PATH:$HOME/insider 
-echo $PATH >> ~/.bashrc
