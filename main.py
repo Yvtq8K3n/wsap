@@ -69,7 +69,8 @@ scanner_port = getattr(args, 'scanner.port')
 if (scanner_ip is not None) or (scanner_port is not None):
 
     print ('Starting DAST module:')
-    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, current_time)
+    scan_mode = getattr(args, 'scan.mode')
+    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scan_mode, current_time)
 
     print ('Creating profile...')
     include_Urls = getattr(args, 'include.url')
@@ -85,7 +86,6 @@ if (scanner_ip is not None) or (scanner_port is not None):
     #3) Crawling / Exploring 
     # Full, OpenApi, Normal Crawl, Ajax Crawl, 
     print ('Launching crawler...')
-    scan_mode = getattr(args, 'scan.mode')
     scan_apiUrl = getattr(args, 'scan.apiUrl')
     scan_apiDefitinion = getattr(args, 'scan.apiDefinition')
     scanners_dast.crawlers.scan(scan_mode, scan_apiUrl, scan_apiDefitinion)
