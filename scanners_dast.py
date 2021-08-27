@@ -10,23 +10,34 @@ import logging
 
 #Files
 TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp/"
+DAST_LOG = "/dast_process.log"
 ZAP_PROCESS_LOG =  "/zap_process.log"
 WAPITI_PROCESS_LOG = "/wapiti_process.log"
 
 class ScannersDast:
-    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, current_time):#, ip_address, port):
+    def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, scan_mode, current_time):#, ip_address, port):
         parsedURL= urlparse(proxy_IpAddress)
         PATH = TMP_DIRECTORY + urlparse(target_url).netloc + "_" + current_time
 
         os.makedirs(PATH, exist_ok=True)
+
+        #Duplicate stdout/stderr
+        tee = subprocess.Popen(["tee", PATH + DAST_LOG], stdin=subprocess.PIPE)
+        os.dup2(tee.stdin.fileno(), sys.stdout.fileno())
+        os.dup2(tee.stdin.fileno(), sys.stderr.fileno())
 
         print("Generating random ZAP API key")
         api_key = uuid.uuid4().hex
         print("API_KEY: "+api_key)
 
         print ('Launching ZAP instance...')
-        subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "sqliplugin", "-config", "api.key="+api_key,
+        if (scan_mode is "TRADITIONAL"):
+            logging.info("Loading aditional modules")
+            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "domxss", "-addoninstall", "sqliplugin","-config", "api.key="+api_key,
         "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
+        else:
+            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addonuninstall", "domxss", "-addoninstall", "sqliplugin", "-config", "api.key="+api_key,
+            "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
 
         print ('Waiting for ZAP to load, 1 min...')
         sleep(60)
