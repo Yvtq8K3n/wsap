@@ -31,7 +31,7 @@ class ScannersDast:
         print("API_KEY: "+api_key)
 
         print ('Launching ZAP instance...')
-        if (scan_mode is "TRADITIONAL"):
+        if (scan_mode == "TRADITIONAL"):
             logging.info("Loading aditional modules")
             subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "domxss", "-addoninstall", "sqliplugin","-config", "api.key="+api_key,
         "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
