@@ -53,7 +53,7 @@ function responseReceived(msg, initiator, helper) {
   logger("Server Response: "+resheaders.getStatusCode())
   if (resheaders.getStatusCode() > 299) {
    
-    logger("Auth failed")
+    logger("Auth failed for user: " + user.getName())
     return;
   } 
 
