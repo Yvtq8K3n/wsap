@@ -9,7 +9,7 @@ from pprint import pprint
 from urllib.parse import urlparse
 
 #Files
-ZAP_PROCESS_LOG =  "/zap_process.log"
+ZAP_PROCESS_LOG =  "/zap.log"
 ZAP_REPORT =  "/zap_report.json"
 STORE_URLS =  "/api_endpoints.txt"
 ZAP_URLS =  "/zap_endpoints.txt"

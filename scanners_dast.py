@@ -10,9 +10,9 @@ import logging
 
 #Files
 TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp/"
-DAST_LOG = "/dast_process.log"
-ZAP_PROCESS_LOG =  "/zap_process.log"
-WAPITI_PROCESS_LOG = "/wapiti_process.log"
+DAST_LOG = "/dast_analysis.log"
+ZAP_PROCESS_LOG =  "/zap.log"
+WAPITI_PROCESS_LOG = "/wapiti.log"
 
 class ScannersDast:
     def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, scan_mode, current_time):#, ip_address, port):
