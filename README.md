@@ -1,5 +1,6 @@
 The Web Security Automation Project(WSAP) is currently a compilation of the following security tools:
-- Wapiti (SAST)
+- InsiderCLI (SAST)
+- Wapiti (DAST)
 - ZAP (DAST)
 - SQLMAP (DAST)
 
