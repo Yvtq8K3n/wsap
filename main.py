@@ -18,7 +18,8 @@ python3 /home/marquez/Desktop/wsap/main.py --target.url https://test-lm.void.pt 
 
 parser = argparse.ArgumentParser(prog='Web Security Application Project(WSAP)')
 
-parser.add_argument('-dT','--target.url', help='The url base of the target web application')
+required_args = parser.add_argument_group('Required arguments')
+required_args.add_argument('-dT','--target.url', help='The url base of the target web application')
 
 #Sast
 sast_scanner = parser.add_argument_group('⭐SAST Scanner Properties⭐')
