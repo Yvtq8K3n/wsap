@@ -18,6 +18,12 @@ function sendingRequest(msg, initiator, helper) {
      logger("Sending authentication Request")
      return msg;
   }
+
+  logger("Before")
+  logger(msg)
+  //Display header+body
+  logger("After")
+  //Display body
   
   logger('Is forced user: '+ ForcedUser.isForcedUserModeEnabled())
   if (!ForcedUser.isForcedUserModeEnabled()) {return;}

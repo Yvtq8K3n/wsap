@@ -69,26 +69,26 @@ class ScannersDast:
             self.zap = scanners.zap
             self.wapiti = scanners.wapiti
 
-        def scan(self, scan_type, apiUrl=None, apiDefinitionURI=None):
+        def scan(self, scan_mode, apiUrl=None, apiDefinitionURI=None):
             print ('Selecting scan method: '+scan_type.name)
 
-            if (scan_type.name=='FULL'):
+            if (scan_mode == "FULL"):
                 self.fullScan(apiUrl, apiDefinitionURI)
-            elif(scan_type.name=='APIONLY'):
+            elif(scan_mode == "APIONLY"):
                 self.readOpenApi(apiUrl, apiDefinitionURI)
-            elif(scan_type.name=='TRADITIONAL'):
+            elif(scan_mode == "TRADITIONAL"):
                 self.scanTradional()
-            elif(scan_type.name=='AJAX'):
+            elif(scan_mode == "AJAX"):
                 self.scanAjax()
 
         def scanAsUser(self, scan_type, user_id, username):
             print ('Selecting scan method: '+scan_type.name)
 
-            if (scan_type.name=='FULL') or (scan_type.name=='APIONLY'):
+            if (scan_type == "FULL") or (scan_type == "APIONLY"):
                 self.fullScanAsUser(user_id, username)
-            elif(scan_type.name=='TRADITIONAL'):
+            elif(scan_type == "TRADITIONAL"):
                 self.scanTradionalAsUser(user_id, username)
-            elif(scan_type.name=='AJAX'):
+            elif(scan_type == "AJAX"):
                 self.scanAjaxAsUser(user_id, username)
 
         def scanTradional(self):

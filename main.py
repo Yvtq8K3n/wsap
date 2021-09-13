@@ -97,21 +97,26 @@ if (scanner_ip is not None) or (scanner_port is not None):
 
     #5) Authenticate
     login_url = getattr(args, 'login.url')
-    login_Request = getattr(args, 'login.request')
+    login_request = getattr(args, 'login.request')
 
-    if (login_url is not None) and (login_Request is not None):
-        login_Request = urllib.parse.unquote(login_Request)
-        print(login_Request)
-        login_JSON_Request = json.loads(login_Request)
+    if (login_url is not None) and (login_request is not None):
+        login_JSON_Request = {"header": {}, "body": {}}
+        login_JSON_Request = json.dumps(login_JSON_Request)
+
+        #header stuff
+        login_JSON_Request["header"] = json.dumps({"ola": {}})
+        login_JSON_Request["body"] = json.loads(urllib.parse.unquote(login_request))
+
         login_usernameFieldName = getattr(args, 'login.userField') 
         login_passwordFieldName = getattr(args, 'login.passField')
         Zap_logged_in_regex = ""
         Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
-        users = getattr(args, 'login.user')
 
+
+        users = getattr(args, 'login.user')
         for (username,password) in users:
-            login_JSON_Request[login_usernameFieldName] = username
-            login_JSON_Request[login_passwordFieldName] = password
+            login_JSON_Request["body"][login_usernameFieldName] = username
+            login_JSON_Request["body"][login_passwordFieldName] = password
 
             #1) Create User
             user_id=scanners_dast.authentications.performJSONLogin(login_url, login_JSON_Request, 
