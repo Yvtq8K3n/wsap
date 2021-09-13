@@ -8,7 +8,7 @@ class ScanMode(enum.IntEnum):
     AJAX = 4
 
     def __str__(self):
-        return self.name
+        return self.name.upper()
 
     def __repr__(self):
         return str(self)

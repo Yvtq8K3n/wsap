@@ -41,6 +41,7 @@ dast_optional.add_argument('--scan.apiDefinition', help='Activate the attack mod
 
 login_properties = parser.add_argument_group('Login properties')
 login_properties.add_argument('--login.url', help='The login url necessary to successfully log into the application')
+login_properties.add_argument('-H','--login.header',action='append',nargs=2, metavar=('header','value'),help='The header_title:header_value of the respective header field (Can be used multiple times)')
 login_properties.add_argument('--login.request', help='A skeleton of the JSON Request sent to perform a successfull login')
 login_properties.add_argument('--login.userField', help='The Username key used on the JSON Request Login')
 login_properties.add_argument('--login.passField', help='The Password key used on the JSON Request Login')
@@ -93,33 +94,29 @@ if (scanner_ip is not None) or (scanner_port is not None):
 
     #4) Attack
     print ('Launching attack...')
-    scanners_dast.attacks.startActiveScan()
+    #scanners_dast.attacks.startActiveScan()
 
     #5) Authenticate
     login_url = getattr(args, 'login.url')
     login_request = getattr(args, 'login.request')
 
     if (login_url is not None) and (login_request is not None):
-        login_JSON_Request = {"header": {}, "body": {}}
-        login_JSON_Request = json.dumps(login_JSON_Request)
-
-        #header stuff
-        login_JSON_Request["header"] = json.dumps({"ola": {}})
-        login_JSON_Request["body"] = json.loads(urllib.parse.unquote(login_request))
+        login_headers = getattr(args, 'login.header')
+        
+        login_JSON_Request = json.loads(urllib.parse.unquote(login_request))
 
         login_usernameFieldName = getattr(args, 'login.userField') 
         login_passwordFieldName = getattr(args, 'login.passField')
         Zap_logged_in_regex = ""
         Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
 
-
         users = getattr(args, 'login.user')
         for (username,password) in users:
-            login_JSON_Request["body"][login_usernameFieldName] = username
-            login_JSON_Request["body"][login_passwordFieldName] = password
+            login_JSON_Request[login_usernameFieldName] = username
+            login_JSON_Request[login_passwordFieldName] = password
 
             #1) Create User
-            user_id=scanners_dast.authentications.performJSONLogin(login_url, login_JSON_Request, 
+            user_id=scanners_dast.authentications.performJSONLogin(login_url, login_headers, login_JSON_Request, 
                 field_username=login_usernameFieldName, field_password=login_passwordFieldName)
             
             #2) Scan

@@ -19,7 +19,6 @@ class ZapScanner:
 
     def __init__(self, TMP_DIRECTORY, ip_address, port, apikey):
         self.TMP_DIRECTORY = TMP_DIRECTORY
-
         self.ip_address = ip_address
         self.port = port
         self.api_key = apikey
@@ -324,7 +323,7 @@ class ZapScanner:
             print('User Auth Configured')
             print('User created with id:'+user_id)
         
-        def performJSONLogin(self, login_url, login_Request, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
+        def performJSONLogin(self, login_url, login_headers, login_Request, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
             #upload_script
             script_name = 'jwtScript.js'
             script_type = 'httpsender'
@@ -363,6 +362,12 @@ class ZapScanner:
 
             self.zap.users.set_authentication_credentials(self.zapscanner.context_id, user_id, user_auth_config)
             self.zap.users.set_user_enabled(self.zapscanner.context_id , user_id, 'true')
+
+            print("Adding customs headers")
+            if (login_headers is not None):
+                for (header, value) in login_headers:
+                    self.zap.script.set_script_var(scriptname=script_name,varkey=header, 
+                        varvalue=value,apikey=self.zapscanner.api_key)
 
             return user_id
 

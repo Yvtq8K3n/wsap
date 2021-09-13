@@ -31,7 +31,7 @@ class ScannersDast:
         print("API_KEY: "+api_key)
 
         print ('Launching ZAP instance...')
-        if (scan_mode == "TRADITIONAL"):
+        if (scan_mode.name == "TRADITIONAL"):
             logging.info("Loading aditional modules")
             subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "domxss", "-addoninstall", "sqliplugin","-config", "api.key="+api_key,
         "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
@@ -70,25 +70,25 @@ class ScannersDast:
             self.wapiti = scanners.wapiti
 
         def scan(self, scan_mode, apiUrl=None, apiDefinitionURI=None):
-            print ('Selecting scan method: '+scan_type.name)
+            print ('Selecting scan method: '+scan_mode.name)
 
-            if (scan_mode == "FULL"):
+            if (scan_mode.name == "FULL"):
                 self.fullScan(apiUrl, apiDefinitionURI)
-            elif(scan_mode == "APIONLY"):
+            elif(scan_mode.name == "APIONLY"):
                 self.readOpenApi(apiUrl, apiDefinitionURI)
-            elif(scan_mode == "TRADITIONAL"):
+            elif(scan_mode.name == "TRADITIONAL"):
                 self.scanTradional()
-            elif(scan_mode == "AJAX"):
+            elif(scan_mode.name == "AJAX"):
                 self.scanAjax()
 
         def scanAsUser(self, scan_type, user_id, username):
             print ('Selecting scan method: '+scan_type.name)
 
-            if (scan_type == "FULL") or (scan_type == "APIONLY"):
+            if (scan_type.name == "FULL") or (scan_type.name == "APIONLY"):
                 self.fullScanAsUser(user_id, username)
-            elif(scan_type == "TRADITIONAL"):
+            elif(scan_type.name == "TRADITIONAL"):
                 self.scanTradionalAsUser(user_id, username)
-            elif(scan_type == "AJAX"):
+            elif(scan_type.name == "AJAX"):
                 self.scanAjaxAsUser(user_id, username)
 
         def scanTradional(self):
@@ -196,10 +196,10 @@ class ScannersDast:
             self.zap = scanners.zap
             self.wapiti = scanners.wapiti
 
-        def performJSONLogin(self, login_url, login_dataJSON, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
+        def performJSONLogin(self, login_url, login_headers, login_dataJSON, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
             print("ZAP: Creating new user")
             print(login_dataJSON)
-            user_id = self.zap.authentications.performJSONLogin(login_url, login_dataJSON, field_username=field_username, field_password=field_password, logged_in_regex=None, logged_out_regex=None)
+            user_id = self.zap.authentications.performJSONLogin(login_url, login_headers, login_dataJSON, field_username=field_username, field_password=field_password, logged_in_regex=None, logged_out_regex=None)
 
             logging.warning("Wapiti: Authentication of requests is provided by ZAP Proxy")
             return user_id

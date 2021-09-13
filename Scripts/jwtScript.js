@@ -16,15 +16,16 @@ function sendingRequest(msg, initiator, helper) {
   
   if (initiator === HttpSender.AUTHENTICATION_INITIATOR) {
      logger("Sending authentication Request")
+     logger(ScriptVars.getScriptVars("jwtScript.js"))
+     var customHeaders = ScriptVars.getScriptVars("jwtScript.js")
+     for (var key in customHeaders) {
+        msg.getRequestHeader().setHeader(key, customHeaders[key])
+     }
+  
+
      return msg;
   }
 
-  logger("Before")
-  logger(msg)
-  //Display header+body
-  logger("After")
-  //Display body
-  
   logger('Is forced user: '+ ForcedUser.isForcedUserModeEnabled())
   if (!ForcedUser.isForcedUserModeEnabled()) {return;}
   
