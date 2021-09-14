@@ -43,7 +43,7 @@ class VulnerabilityAudit:
             #print(self.insider_vulnerabilities)
         except IOError:
             print("Unable to load file:"+ insider_path)
-            self.insider_vulnerabilities = json.loads('["No analysis found"]')
+            self.insider_vulnerabilities = json.loads('{}')
 
         self.zap_vulnerabilities = json.loads('{ "Critical" : [], "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
         zap_path = PATH + ZAP_REPORT
@@ -58,7 +58,7 @@ class VulnerabilityAudit:
             #print(self.zap_vulnerabilities)
         except IOError:
             print("Unable to load file:"+ zap_path)
-            self.zap_vulnerabilities = json.loads('["No analysis found"]')
+            self.zap_vulnerabilities = json.loads('{}')
 		
         self.wapiti_vulnerabilities = json.loads('{ "Critical" : [], "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
         wapiti_path = PATH + WAPITI_REPORT + ".json"
@@ -89,7 +89,7 @@ class VulnerabilityAudit:
             #print(self.wapiti_vulnerabilities)
         except IOError:
             print("Unable to load file:"+ wapiti_path)
-            self.wapiti_vulnerabilities = json.loads('["No analysis found"]')
+            self.wapiti_vulnerabilities = json.loads('{}')
 
         self.vulnerabilty_audit = {
             "SAST_InsiderCLI": self.insider_vulnerabilities,
