@@ -1,7 +1,6 @@
 import enum
 
 class ScanMode(enum.IntEnum):
-    NONE = 0
     FULL = 1
     APIONLY = 2
     TRADITIONAL = 3

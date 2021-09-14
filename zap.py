@@ -332,13 +332,12 @@ class ZapScanner:
             print("Loading Script: "+self.zap.script.load(script_name, script_type, script_engine, file_name))
             print("Activating Script: "+self.zap.script.enable(script_name))
 
-
             login_data = json.dumps(login_Request)
             #set_json_based_auth
             #print(login_Request)
             #login_data = bytes(str(login_Request), "utf-8")#.decode("unicode_escape")
             #print(login_data)
-            json_based_config = 'loginUrl=' + urllib.parse.quote(login_url) + '&loginRequestData=' + urllib.parse.quote(login_data)
+            json_based_config = 'loginUrl=' + urllib.parse.quote(login_url) +'&loginRequestData=' + urllib.parse.quote(login_data)
             print(json_based_config)
             
             self.zap.authentication.set_authentication_method(self.zapscanner.context_id, 'jsonBasedAuthentication', json_based_config)

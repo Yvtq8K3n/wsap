@@ -13,7 +13,7 @@ var ForcedUser    = org.parosproxy.paros.control.Control.getSingleton()
                         );
 
 function sendingRequest(msg, initiator, helper) {
-  
+  var url = msg.getRequestHeader().getURI().toString()
   if (initiator === HttpSender.AUTHENTICATION_INITIATOR) {
      logger("Sending authentication Request")
      logger(ScriptVars.getScriptVars("jwtScript.js"))
@@ -35,7 +35,7 @@ function sendingRequest(msg, initiator, helper) {
      return;
   }
   
-  logger('Url: ' + msg.getRequestHeader().getURI().toString())
+  logger('Url: ' + url)
   logger("Adding authorization header token" + (' ' + token).slice(0, 20))
   var headers = msg.getRequestHeader();
   msg.getRequestHeader().setHeader('Authorization', token);
@@ -53,18 +53,21 @@ function responseReceived(msg, initiator, helper) {
   var contextId = msg.getRequestingUser().getContextId()
   var user = ForcedUser.getForcedUser(contextId)
 
-  logger('Trying to authenticate with user: '+ user.getName())
+  logger('Attempting to authenticate with user: '+ user.getName())
   if (!ForcedUser.isForcedUserModeEnabled()) {return;}
+
+  if (resheaders.getStatusCode() == 405){
+    return;
+  }
 
   logger("Handling auth response")
   logger("Server Response: "+resheaders.getStatusCode())
   if (resheaders.getStatusCode() > 299) {
-   
-    logger("Auth failed for user: " + user.getName())
+    logger("Auth Status: FAILED; User: " + user.getName())
     return;
   } 
 
-  logger("Authentication request was successful")
+  logger("Auth Status: SUCCESS; User: " + user.getName())
 
   //Retrieve Authorization Token from header
   token = msg.getResponseHeader().getHeader("Authorization")
