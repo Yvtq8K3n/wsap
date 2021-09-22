@@ -12,8 +12,7 @@ ZAP_REPORT = "/zap_report.json"
 WAPITI_REPORT = "/wapiti_report"
 AUDIT_REPORT = "/audit_report.json"
 
-LIMIT = 7 #A vulnerabilty will be consider critical if it reaches at least 7
-CRITICAL_LEVEL = 4
+LIMIT = 7 #A vulnerabilty will be consider high if it reaches at least 7
 HIGH_LEVEL = 3
 MEDIUM_LEVEL = 2
 LOW_LEVEL = 1
@@ -26,7 +25,7 @@ class VulnerabilityAudit:
         os.makedirs(PATH, exist_ok=True)
         print ('Processing reports...')
 
-        self.insider_vulnerabilities = json.loads('{ "Critical" : [], "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
+        self.insider_vulnerabilities = json.loads('{ "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
        
         #Initializing Scanners
         insider_path = PATH  + INSIDER_REPORT
@@ -35,8 +34,8 @@ class VulnerabilityAudit:
             with open(insider_path) as json_file:
                 insider_report = json.load(json_file)
                 for vulnerability in insider_report["vulnerabilities"]:
-                    scaled_cvss = round(float(vulnerability["cvss"]) * float(CRITICAL_LEVEL) / LIMIT)
-                    if (scaled_cvss > CRITICAL_LEVEL):
+                    scaled_cvss = int(float(vulnerability["cvss"]) * float(HIGH_LEVEL) / LIMIT)
+                    if (scaled_cvss > HIGH_LEVEL):
                         scaled_cvss = scaled_cvss
                     self.append(self.insider_vulnerabilities,scaled_cvss,vulnerability)
 
@@ -45,7 +44,7 @@ class VulnerabilityAudit:
             print("Unable to load file:"+ insider_path)
             self.insider_vulnerabilities = json.loads('{}')
 
-        self.zap_vulnerabilities = json.loads('{ "Critical" : [], "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
+        self.zap_vulnerabilities = json.loads('{ "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
         zap_path = PATH + ZAP_REPORT
         try:
             print("Loading file: "+ zap_path)
@@ -60,7 +59,7 @@ class VulnerabilityAudit:
             print("Unable to load file:"+ zap_path)
             self.zap_vulnerabilities = json.loads('{}')
 		
-        self.wapiti_vulnerabilities = json.loads('{ "Critical" : [], "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
+        self.wapiti_vulnerabilities = json.loads('{ "High" : [], "Medium" : [], "Low" : [], "Info" : [] }')
         wapiti_path = PATH + WAPITI_REPORT + ".json"
         try:
             print("Loading file: "+ wapiti_path)
@@ -113,9 +112,7 @@ class VulnerabilityAudit:
         print(audit_path)
 
     def append(self, root, level, vulnerability):
-        if (level == CRITICAL_LEVEL):
-            root["Critical"].append(vulnerability)
-        elif (level == HIGH_LEVEL):
+        if (level == HIGH_LEVEL):
             root["High"].append(vulnerability)
         elif (level == MEDIUM_LEVEL):
             root["Medium"].append(vulnerability)
