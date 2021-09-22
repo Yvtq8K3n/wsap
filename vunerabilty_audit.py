@@ -112,7 +112,7 @@ class VulnerabilityAudit:
         print(audit_path)
 
     def append(self, root, level, vulnerability):
-        if (level == HIGH_LEVEL):
+        if (level >= HIGH_LEVEL):
             root["High"].append(vulnerability)
         elif (level == MEDIUM_LEVEL):
             root["Medium"].append(vulnerability)
