@@ -52,7 +52,7 @@ class WapitiScanner:
 
             # According to Wapiti url's must be excluded with: --exclude <url>
             for path in default_excluded_paths:
-                exclude_url = self.target_url+str(path)
+                exclude_url = self.target_url+"/"+str(path)
                 self.wapiti_excluded_cmd += "--exclude {} ".format(exclude_url)
                 logging.info('Excluded %s', exclude_url)
 

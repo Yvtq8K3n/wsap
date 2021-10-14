@@ -1,8 +1,11 @@
 import argparse
 import json
+import sys
 from logging import currentframe
 import logging
+import pathlib
 import urllib
+import subprocess, os
 from datetime import datetime
 from scanners_sast import ScannersSast
 from scanners_dast import ScannersDast
@@ -20,6 +23,9 @@ parser = argparse.ArgumentParser(prog='Web Security Application Project(WSAP)')
 
 required_args = parser.add_argument_group('Required arguments')
 required_args.add_argument('-dT','--target.url', help='The url base of the target web application')
+
+server = parser.add_argument_group('Server⭐')
+server.add_argument('-s','--server', help='If used further interations are processed by a dedicated server')
 
 #Sast
 sast_scanner = parser.add_argument_group('⭐SAST Scanner Properties⭐')
@@ -51,87 +57,91 @@ login_properties.add_argument('-u','--login.user',action='append',nargs=2, metav
 
 args = parser.parse_args()
 
-#Target
-target_url = getattr(args, 'target.url') #forçar como obrigatorio
-current_time = datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
+server = getattr(args, 'server') 
+if (server is not None):
+    print("Lauching subprocess port "+str(server))
+    subprocess.Popen(["python3 "+os.path.dirname(__file__)+"/server.py "+str(server)],shell=True)
+    print("Server sucesfully launched")
+else:
+    #Target
+    target_url = getattr(args, 'target.url') #forçar como obrigatorio
+    current_time = datetime.now().strftime("%Y_%m_%d_%H:%M:%S")
 
+    #SAST SCANNER
+    scanner_target = getattr(args, 'target')
+    if (scanner_target is not None):
+        print ('Starting SAST scan')
+        scanners_sast = ScannersSast(target_url, current_time)
+        scanners_sast.scanner.start(scanner_target)
 
-#SAST SCANNER
-scanner_target = getattr(args, 'target')
-if (scanner_target is not None):
-    print ('Starting SAST scan')
-    scanners_sast = ScannersSast(target_url, current_time)
-    scanners_sast.scanner.start(scanner_target)
+    #DAST SCANNER
+    scanner_ip = getattr(args, 'scanner.ip')
+    scanner_port = getattr(args, 'scanner.port')
 
+    if (scanner_ip is not None) or (scanner_port is not None):
 
-#DAST SCANNER
-scanner_ip = getattr(args, 'scanner.ip')
-scanner_port = getattr(args, 'scanner.port')
+        print ('Starting DAST module:')
+        scan_mode = getattr(args, 'scan.mode')
+        scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scan_mode, current_time)
 
-if (scanner_ip is not None) or (scanner_port is not None):
+        print ('Creating profile...')
+        include_Urls = getattr(args, 'include.url')
+        if include_Urls is None: 
+            include_Urls = []
 
-    print ('Starting DAST module:')
-    scan_mode = getattr(args, 'scan.mode')
-    scanners_dast = ScannersDast(target_url, scanner_ip, scanner_port, scan_mode, current_time)
+        exclude_Urls = getattr(args, 'exclude.url')
+        if exclude_Urls is None: 
+            exclude_Urls = []
 
-    print ('Creating profile...')
-    include_Urls = getattr(args, 'include.url')
-    if include_Urls is None: 
-        include_Urls = []
+        scanners_dast.createContext(target_url, include_Urls, exclude_Urls, current_time)
 
-    exclude_Urls = getattr(args, 'exclude.url')
-    if exclude_Urls is None: 
-        exclude_Urls = []
+        #3) Crawling / Exploring 
+        # Full, OpenApi, Normal Crawl, Ajax Crawl, 
+        print ('Launching crawler...')
+        scan_apiUrl = getattr(args, 'scan.apiUrl')
+        scan_apiDefitinion = getattr(args, 'scan.apiDefinition')
+        scanners_dast.crawlers.scan(scan_mode, scan_apiUrl, scan_apiDefitinion)
 
-    scanners_dast.createContext(target_url, include_Urls, exclude_Urls, current_time)
+        #4) Attack
+        print ('Launching attack...')
+        scanners_dast.attacks.startActiveScan()
 
-    #3) Crawling / Exploring 
-    # Full, OpenApi, Normal Crawl, Ajax Crawl, 
-    print ('Launching crawler...')
-    scan_apiUrl = getattr(args, 'scan.apiUrl')
-    scan_apiDefitinion = getattr(args, 'scan.apiDefinition')
-    scanners_dast.crawlers.scan(scan_mode, scan_apiUrl, scan_apiDefitinion)
+        #5) Authenticate
+        login_url = getattr(args, 'login.url')
+        login_request = getattr(args, 'login.request')
 
-    #4) Attack
-    print ('Launching attack...')
-    scanners_dast.attacks.startActiveScan()
-
-    #5) Authenticate
-    login_url = getattr(args, 'login.url')
-    login_request = getattr(args, 'login.request')
-
-    if (login_url is not None) and (login_request is not None):
-        login_headers = getattr(args, 'login.header')
-        
-        login_JSON_Request = json.loads(urllib.parse.unquote(login_request))
-
-        login_usernameFieldName = getattr(args, 'login.userField') 
-        login_passwordFieldName = getattr(args, 'login.passField')
-        Zap_logged_in_regex = ""
-        Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
-
-        users = getattr(args, 'login.user')
-        for (username,password) in users:
-            login_JSON_Request[login_usernameFieldName] = username
-            login_JSON_Request[login_passwordFieldName] = password
-
-            #1) Create User
-            user_id=scanners_dast.authentications.performJSONLogin(login_url, login_headers, login_JSON_Request, 
-                field_username=login_usernameFieldName, field_password=login_passwordFieldName)
+        if (login_url is not None) and (login_request is not None):
+            login_headers = getattr(args, 'login.header')
             
-            #2) Scan
-            scanners_dast.crawlers.scanAsUser(scan_mode,user_id, username)
-            
-            #3) Perform Attack
-            print ('Launching attack...')
-            scanners_dast.attacks.startActiveScanAsUser(user_id, username)
+            login_JSON_Request = json.loads(urllib.parse.unquote(login_request))
 
-    #6) Report
-    scanners_dast.alerts.report()
+            login_usernameFieldName = getattr(args, 'login.userField') 
+            login_passwordFieldName = getattr(args, 'login.passField')
+            Zap_logged_in_regex = ""
+            Zap_logged_out_regex = r'\Q<a href="logout.jsp">Logout</a>\E'
 
-    # To close ZAP:
-    scanners_dast.shutdown()
+            users = getattr(args, 'login.user')
+            for (username,password) in users:
+                login_JSON_Request[login_usernameFieldName] = username
+                login_JSON_Request[login_passwordFieldName] = password
+
+                #1) Create User
+                user_id=scanners_dast.authentications.performJSONLogin(login_url, login_headers, login_JSON_Request, 
+                    field_username=login_usernameFieldName, field_password=login_passwordFieldName)
+                
+                #2) Scan
+                scanners_dast.crawlers.scanAsUser(scan_mode,user_id, username)
+                
+                #3) Perform Attack
+                print ('Launching attack...')
+                scanners_dast.attacks.startActiveScanAsUser(user_id, username)
+
+        #6) Report
+        scanners_dast.alerts.report()
+
+        # To close ZAP:
+        scanners_dast.shutdown()
 
 
-users = getattr(args, 'login.user')
-vulnerabilty_audit = VulnerabilityAudit(target_url, current_time, users)
+    users = getattr(args, 'login.user')
+    vulnerabilty_audit = VulnerabilityAudit(target_url, current_time, users)

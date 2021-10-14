@@ -1,6 +1,6 @@
 from zap import ZapScanner
 from wapiti import WapitiScanner
-from urllib.parse import urlparse
+from urllib.parse import urlparse, quote
 import subprocess
 import time
 import sys
@@ -8,11 +8,12 @@ import os
 import uuid
 import logging
 
+
 #Files
 TMP_DIRECTORY =  os.path.dirname(__file__) + "/tmp/"
-DAST_LOG = "/dast_analysis.log"
-ZAP_PROCESS_LOG =  "/zap.log"
-WAPITI_PROCESS_LOG = "/wapiti.log"
+DAST_LOG = "dast_analysis.log"
+ZAP_PROCESS_LOG =  "zap.log"
+WAPITI_PROCESS_LOG = "wapiti.log"
 
 class ScannersDast:
     def __init__(self, target_url, proxy_IpAddress, proxy_PortAddress, scan_mode, current_time):#, ip_address, port):
@@ -22,7 +23,7 @@ class ScannersDast:
         os.makedirs(PATH, exist_ok=True)
 
         #Duplicate stdout/stderr
-        tee = subprocess.Popen(["tee", PATH + DAST_LOG], stdin=subprocess.PIPE)
+        tee = subprocess.Popen(["tee", os.path.join(PATH,DAST_LOG)], stdin=subprocess.PIPE)
         os.dup2(tee.stdin.fileno(), sys.stdout.fileno())
         os.dup2(tee.stdin.fileno(), sys.stderr.fileno())
 
@@ -33,11 +34,13 @@ class ScannersDast:
         print ('Launching ZAP instance...')
         if (scan_mode.name == "TRADITIONAL"):
             logging.info("Loading aditional modules")
-            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "domxss", "-addoninstall", "sqliplugin","-config", "api.key="+api_key,
-        "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
+            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addoninstall", "domxss", "-addoninstall", "sqliplugin","-config", "api.key="+str(api_key),
+        "-port", str(proxy_PortAddress)],stdout=open(os.path.join(PATH,ZAP_PROCESS_LOG), "w"))
         else:
-            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addonuninstall", "domxss", "-addoninstall", "sqliplugin", "-config", "api.key="+api_key,
-            "-port", proxy_PortAddress],stdout=open(PATH + ZAP_PROCESS_LOG, "w"))
+            subprocess.Popen(["/usr/local/bin/zap.sh","-daemon", "-addonuninstall", "domxss", "-addoninstall", "sqliplugin", "-config", "api.key="+str(api_key),
+            "-port", str(proxy_PortAddress)],stdout=open(os.path.join(PATH,ZAP_PROCESS_LOG), "w"))
+        
+
 
         print ('Waiting for ZAP to load, 1 min...')
         sleep(60)
@@ -198,7 +201,7 @@ class ScannersDast:
 
         def performJSONLogin(self, login_url, login_headers, login_dataJSON, field_username, field_password, logged_in_regex=None, logged_out_regex=None):
             print("ZAP: Creating new user")
-            print(login_dataJSON)
+            
             user_id = self.zap.authentications.performJSONLogin(login_url, login_headers, login_dataJSON, field_username=field_username, field_password=field_password, logged_in_regex=None, logged_out_regex=None)
 
             logging.warning("Wapiti: Authentication of requests is provided by ZAP Proxy")

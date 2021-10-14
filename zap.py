@@ -22,7 +22,7 @@ class ZapScanner:
         self.ip_address = ip_address
         self.port = port
         self.api_key = apikey
-        self.zap = ZAPv2(apikey=apikey, proxies={'http': 'http://'+ip_address+':'+port, 'https': 'http://'+ip_address+':'+port})
+        self.zap = ZAPv2(apikey=apikey, proxies={'http': 'http://'+str(ip_address)+':'+str(port), 'https': 'http://'+str(ip_address)+':'+str(port)})
         self.crawlers = self.Crawler(self)
         self.attacks = self.Attack(self)
         self.alerts = self.Alert(self)
