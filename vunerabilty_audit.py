@@ -111,6 +111,9 @@ class VulnerabilityAudit:
         print("\nReport successfully generated in: ")
         print(audit_path)
 
+    def get_report(self):
+        return self.vulnerabilty_audit
+
     def append(self, root, level, vulnerability):
         if (level >= HIGH_LEVEL):
             root["High"].append(vulnerability)

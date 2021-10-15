@@ -19,20 +19,20 @@ import psutil
 print("Server starting")
 
 #Create a socket
-socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+TCPsocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 #socket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
 
 ip = "127.0.0.1"
 port = int(sys.argv[1])
 
 # Binding socket to specified ip address and port
-socket.bind((ip, port))
+TCPsocket.bind((ip, port))
 
 # This is max ammount of clients we will accept
-socket.listen(1)
+TCPsocket.listen(1)
 
 # Accepting connection from client
-sock, addr = socket.accept()
+sock, addr = TCPsocket.accept()
 print("Client connected from", addr)
 
 # Receiving data from client
@@ -79,7 +79,7 @@ try:
         exclude_Urls = []
         if "excludes" in dast_analysis:
             for exclude in dast_analysis['excludes']:
-                exclude_Urls.append(include['exclude.url'])
+                exclude_Urls.append(exclude['exclude.url'])
         
         scanners_dast.createContext(target_url, include_Urls, exclude_Urls, current_time)
 
@@ -139,7 +139,7 @@ try:
                 sendJSON = json.dumps({"info" : "Attacking as user: "+str(username)})
                 sock.send(sendJSON.encode())
                 scanners_dast.attacks.startActiveScanAsUser(user_id, username)
-
+        
         #6) Report
         sendJSON = json.dumps({"info" : "Generating report"})
         sock.send(sendJSON.encode())
@@ -148,22 +148,22 @@ try:
 
         # To close ZAP:
         scanners_dast.shutdown()
-
+   
     users = []
     if "users" in login_data:
         for user in login_data['users']:
-            login_headers.append({user["username"]:user["password"]})
+            users.append([user["username"],user["password"]])
 
-    vulnerabilty_audit = VulnerabilityAudit(target_url, current_time, users)
-
-    sendJSON = json.dumps({"info" : "\nAnalysis Summary:"})
+    sendJSON = json.dumps({"info" : "Analysis Summary:"})
     sock.send(sendJSON.encode())
+    vulnerabilty_audit = VulnerabilityAudit(target_url, current_time, users)
+    json_report = vulnerabilty_audit.get_report()
 
-    for tool,analysis in vulnerabilty_audit.items():
+    for tool,analysis in json_report.items():
         for level,results in analysis.items():
             analysis[level]=len(results)
 
-    sendJSON = json.dumps(vulnerabilty_audit)
+    sendJSON = json.dumps(json_report)
     sock.send(sendJSON.encode())
 
 except Exception as e:
@@ -181,8 +181,8 @@ finally:
                 process.terminate()
             else:
                 os.system('kill -9 {0}'.format(_pid))
-
-    sock.shutdown()
+                
+    sock.shutdown(socket.SHUT_WR)
     sock.close()
 
 

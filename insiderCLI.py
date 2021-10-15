@@ -5,7 +5,7 @@ import shlex
 from urllib.parse import urlparse
 
 #Files
-REPORT_PATH = "insider.json"
+REPORT_PATH = "insider_report.json"
 INSIDER_LOG =  "insider.log"
 
 #Properties
